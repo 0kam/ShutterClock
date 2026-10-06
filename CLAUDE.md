@@ -65,10 +65,23 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.1 lists the open items U1–U26 (§3) and the test-shot preview options
-  (§4). First blocker: **U1 camera model** (decides remote terminal, dummy
-  battery, USB port, Wi-Fi).
+- Spec v0.2 lists the open items U1–U27 (§3) and the test-shot preview options
+  (§4).
+- **Target cameras (U1 closed)**: must work on D7200 and D7500; nice to have
+  D7000, D7100, D800, D810. All six use EN-EL15-family batteries → one dummy
+  battery type (EP-5B, 9 V like the EH-5b adapter). Release is the same 3 wires
+  everywhere; only the camera connector differs (MC-DC2-type accessory terminal
+  on the D7xxx, 10-pin on D800/D810: pin 4 release, 9 half-press, 6 signal GND).
+  Proposed (U27): 3.5 mm stereo jack on the board + off-the-shelf 3.5 mm →
+  MC-DC2 / 10-pin intervalometer cables. USB connector differs per body (spec §2.1).
+- Pololu D36V28F9: EN has a 100 kΩ pull-up to VIN → never drive EN straight from
+  a GPIO; use an open-drain N-MOSFET. Sleep draw ≈10–20 µA per volt of VIN.
+- Camera clock runs from an internal rechargeable cell charged from the main
+  battery/EP-5B; power-per-shot may let it run flat → candidate rule: ShutterClock
+  records are the time reference, mapped 1:1 to file numbers (needs shot
+  detection, U10).
 - Preview idea under evaluation: Android Chrome + USB OTG cable to the camera,
-  the same web page speaks PTP over WebUSB (no ShutterClock hardware). Feasibility
-  check before any code: open the web-gphoto2 demo on the phone with the real
-  camera.
+  the same web page speaks PTP over WebUSB (no ShutterClock hardware). The user
+  runs the no-code check on 2026-10-07 with the web-gphoto2 demo:
+  `docs/measurements/2026-10-07_webusb_ptp_check.md` (procedure + result table).
+  Key unknown: does the wired release still work while USB/PTP is connected?
