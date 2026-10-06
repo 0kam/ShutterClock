@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Build artifacts
+build/
+build-*/
+*.o
+*.elf
+*.hex
+*.bin
+*.uf2
+firmware/build-*.log
+
+# Editor
+.vscode/
+.idea/
+
+# Python
+__pycache__/
