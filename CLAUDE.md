@@ -65,22 +65,27 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.8 lists the open items U1–U28 (§3), the test-shot preview options
-  (§4) and a **draft circuit/BOM (§6, not yet approved by the user)**.
-  U27 decided: 3.5 mm stereo jack + off-the-shelf cables.
+- Spec v0.9 lists the open items U1–U29 (§3), the test-shot preview options
+  (§4) and a **draft circuit/BOM (§6, not yet approved as a whole)**.
+  Decided: U27 3.5 mm stereo jack + off-the-shelf cables; U14 NJW4181U3-33B
+  (Akizuki 113996, SOT-89, 35 V/40 V abs, Iq 9 µA) directly on the PCB.
 - **Purchasing rules (user, 2026-10-07): Akizuki first, Switch Science second,
-  no overseas mail order; through-hole parts for student assembly** (domestic
-  Amazon.co.jp etc. for camera accessories). Consequences: D36V50F9/D36V28F9
-  are not sold domestically → camera 9 V = **Akizuki MBC2596-01 (131750,
-  LM2596-ADJ module, user's pick; trimpot set to 9.0 V, remove its LED) +
-  4700 µF** (LM2596 peak limit ≥3.4 A, frequency-foldback limiting, no hiccup;
-  shot peaks need ≤0.5 mA·s above 3.3 A); fallbacks DFRobot DFR1015 (SS 8601),
-  Pololu D30V33MAS (SS 9640). 3.3 V: no through-hole ≥30 V low-Iq LDO at
-  Akizuki and NJU7223 is a 14 V part → **user proposed NJW4181U3-33B (113996,
-  SOT-89, 35 V/40 V abs, Iq 9 µA) on the AE-SOT89 adapter (110835) as a plug-in
-  3-pin part, pre-soldered before student assembly — pending the user's
-  decision**; fallback 2SK4017 follower + 9.1 V zener + NJU7223F33. TVS = 2×
-  P4KE15A in series (clamp up to 42 V → 100 Ω + 10 µF RC in front of the LDO).
+  no overseas mail order.** ShutterClock is assembled by the user, not by
+  students, so **SMD parts are fine here** (the through-hole rule is
+  SnowGauge's). Camera accessories from domestic shops (Amazon.co.jp etc.).
+- Camera 9 V = **Akizuki MBC2596-01 (131750, LM2596-ADJ module, user's pick;
+  trimpot set to 9.4 V, remove its LED) + 5 A Schottky + 4700 µF** (LM2596 peak
+  limit ≥3.4 A, frequency-foldback limiting, no hiccup; shot peaks need
+  ≤0.5 mA·s above 3.3 A); fallbacks DFRobot DFR1015 (SS 8601), Pololu
+  D30V33MAS (SS 9640). TVS = 2× P4KE15A in series (clamp up to 42 V → 100 Ω +
+  10 µF RC in front of the LDO).
+- **Clock keep-alive (U29, draft)**: the LM2596 draws 5 mA while on, so
+  powering the camera 1 h/day for its clock cell would cost ~24 Wh/yr; no
+  low-Iq 9 V regulator exists domestically (Akizuki 9 V parts are mA-class,
+  NJW4181 8 V version not stocked) → separate micro-power path: 2SJ334 switch →
+  2SK4017 source follower with a zener gate reference (~8–9 V, ~10 µA bias),
+  switched in for ~5 min after each shot. Nikon manuals (D7000–D7200): 2 days
+  charging → ~3 months of clock (to verify).
 - Targets (user): typical schedule 07:00–18:00 hourly (12 shots/day); lead-acid
   12 V 20 Ah (LiFePO4 at mild sites); ~1 year on 20 Ah → power-per-shot mode,
   camera path cut by a high-side P-FET ahead of the regulator.
