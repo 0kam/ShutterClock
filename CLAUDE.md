@@ -65,8 +65,15 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.2 lists the open items U1–U27 (§3) and the test-shot preview options
-  (§4).
+- Spec v0.3 lists the open items U1–U28 (§3) and the test-shot preview options
+  (§4). U27 decided: 3.5 mm stereo jack + off-the-shelf cables.
+- **D7500 measured 2026-10-07** (`docs/measurements/2026-10-07_d7500_current.md`,
+  9 V PSU → picowatt → EP-5B): standby ≈ switch OFF ≈ 0.60 mA; one shot 3.3 A·s
+  (~80 % is the ~11 s the camera stays awake after the shot); peaks 3.1 A per
+  shot, 3.9 A at power-on; **PSU limit 2 A → camera "Err"** → the 9 V path must
+  source ~4 A peaks (U28; D36V28F9 marginal). picowatt can be driven from here:
+  `cd ~/NIES/picowatt/app && uv run picowatt-cli --preset fast --adcrange 0 --cal`
+  (port /dev/cu.usbmodem21401; analysis scripts are throwaway numpy, no pandas).
 - **Target cameras (U1 closed)**: must work on D7200 and D7500; nice to have
   D7000, D7100, D800, D810. All six use EN-EL15-family batteries → one dummy
   battery type (EP-5B, 9 V like the EH-5b adapter). Release is the same 3 wires
