@@ -322,8 +322,8 @@ def silk(text, x, y, size=1.2, bold=False):
 
 
 silk("ShutterClock v1.0", 30, 86, 1.6, True)
-silk("BAT 12V +  -", 13.5, 77, 1.0, True)
-silk("CAM +  -", 84.5, 77, 1.0, True)
+silk("BAT 12V +  -", 13.5, 73.5, 1.0, True)
+silk("CAM +  -", 84.5, 73.5, 1.0, True)
 silk("REMOVE JP1 BEFORE USB", 46, 2.5, 0.8, True)
 silk("USB", 20, 1.5, 1.0)
 silk("U2: SET 9.4V, REMOVE LED", 74, 50.5, 0.9)
