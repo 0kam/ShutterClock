@@ -65,13 +65,16 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.3 lists the open items U1–U28 (§3) and the test-shot preview options
+- Spec v0.4 lists the open items U1–U28 (§3) and the test-shot preview options
   (§4). U27 decided: 3.5 mm stereo jack + off-the-shelf cables.
-- **D7500 measured 2026-10-07** (`docs/measurements/2026-10-07_d7500_current.md`,
-  9 V PSU → picowatt → EP-5B): standby ≈ switch OFF ≈ 0.60 mA; one shot 3.3 A·s
-  (~80 % is the ~11 s the camera stays awake after the shot); peaks 3.1 A per
-  shot, 3.9 A at power-on; **PSU limit 2 A → camera "Err"** → the 9 V path must
-  source ~4 A peaks (U28; D36V28F9 marginal). picowatt can be driven from here:
+- **D7500 measured 2026-10-07, 4 runs** (`docs/measurements/2026-10-07_d7500_current.md`,
+  9 V PSU → picowatt → EP-5B): standby = switch OFF = 0.42 mA (drifted down from
+  0.60 mA after a clock reset); one shot 2.7 A·s with MF + standby timer 4 s
+  (~85 % is the ~10 s awake after the shot); sensor cleaning only on power-switch
+  ON/OFF; **supply restored with the switch ON → camera starts by itself, shutter
+  fired 1.95 s after power-up with the remote held**; peaks 3–4.1 A, **PSU limit
+  2 A → "Err"** → D36V28F9 too small, candidate D36V50F9 (U28). U8 leaning
+  always-on (not decided by the user). picowatt can be driven from here:
   `cd ~/NIES/picowatt/app && uv run picowatt-cli --preset fast --adcrange 0 --cal`
   (port /dev/cu.usbmodem21401; analysis scripts are throwaway numpy, no pandas).
 - **Target cameras (U1 closed)**: must work on D7200 and D7500; nice to have
