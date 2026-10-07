@@ -65,14 +65,17 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.5 lists the open items U1–U28 (§3), the test-shot preview options
+- Spec v0.6 lists the open items U1–U28 (§3), the test-shot preview options
   (§4) and a **draft circuit/BOM (§6, not yet approved by the user)**.
   U27 decided: 3.5 mm stereo jack + off-the-shelf cables.
-- **Purchasing rule (user, 2026-10-07): Akizuki first, Switch Science second,
-  no overseas mail order** (domestic Amazon.co.jp etc. for camera accessories).
-  Consequences: D36V50F9/D36V28F9 are not sold domestically → 9 V candidate is
-  Pololu D30V33MAS (SS 9640); no through-hole ≥30 V low-Iq LDO at Akizuki →
-  RT9069-33 (SOT-23-5) or NJW4183U3-33B (SOT-89); TVS = 2× P4KE15A in series.
+- **Purchasing rules (user, 2026-10-07): Akizuki first, Switch Science second,
+  no overseas mail order; no surface-mount parts at all** (domestic Amazon.co.jp
+  etc. for camera accessories). Consequences: D36V50F9/D36V28F9 are not sold
+  domestically → camera 9 V = DFRobot DFR1015 (SS 8601, 2.5 A) + 4700 µF
+  (shot peaks need ≤3.7 mA·s of support above 2.5 A), fallback Pololu
+  D30V33MAS (SS 9640); 3.3 V = 2SK4017 source follower + 9.1 V zener in front
+  of the SnowGauge NJU7223F33 (no through-hole ≥30 V low-Iq LDO at Akizuki;
+  NJU7223 is a 14 V part); TVS = 2× P4KE15A in series.
 - Targets (user): typical schedule 07:00–18:00 hourly (12 shots/day); lead-acid
   12 V 20 Ah (LiFePO4 at mild sites); ~1 year on 20 Ah → power-per-shot mode,
   camera path cut by a high-side P-FET ahead of the regulator.
