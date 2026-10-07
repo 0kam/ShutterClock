@@ -65,8 +65,17 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.4 lists the open items U1–U28 (§3) and the test-shot preview options
-  (§4). U27 decided: 3.5 mm stereo jack + off-the-shelf cables.
+- Spec v0.5 lists the open items U1–U28 (§3), the test-shot preview options
+  (§4) and a **draft circuit/BOM (§6, not yet approved by the user)**.
+  U27 decided: 3.5 mm stereo jack + off-the-shelf cables.
+- **Purchasing rule (user, 2026-10-07): Akizuki first, Switch Science second,
+  no overseas mail order** (domestic Amazon.co.jp etc. for camera accessories).
+  Consequences: D36V50F9/D36V28F9 are not sold domestically → 9 V candidate is
+  Pololu D30V33MAS (SS 9640); no through-hole ≥30 V low-Iq LDO at Akizuki →
+  RT9069-33 (SOT-23-5) or NJW4183U3-33B (SOT-89); TVS = 2× P4KE15A in series.
+- Targets (user): typical schedule 07:00–18:00 hourly (12 shots/day); lead-acid
+  12 V 20 Ah (LiFePO4 at mild sites); ~1 year on 20 Ah → power-per-shot mode,
+  camera path cut by a high-side P-FET ahead of the regulator.
 - **D7500 measured 2026-10-07, 4 runs** (`docs/measurements/2026-10-07_d7500_current.md`,
   9 V PSU → picowatt → EP-5B): standby = switch OFF = 0.42 mA (drifted down from
   0.60 mA after a clock reset); one shot 2.7 A·s with MF + standby timer 4 s
