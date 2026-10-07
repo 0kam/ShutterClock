@@ -9,11 +9,12 @@ Nikon デジタル一眼レフをリモート端子から有線レリーズし�
 
 ## 状態（2026-10-06）
 
-設計の初期段階です。初期決定事項と未決事項を [設計仕様書 v0.9](ShutterClock_設計仕様書_v0.9.md) にまとめています。
+設計の初期段階です。初期決定事項と未決事項を [設計仕様書 v0.10](ShutterClock_設計仕様書_v0.10.md) にまとめています。
 対象機種は D7200・D7500（必須）と D7000・D7100・D800・D810（任意）。次は実カメラでの WebUSB 動作確認と、タイミング・消費電流の測定です。
 
 ## 開発者向け
 
-- 設計仕様書（要件・設計判断・未決事項・改版履歴）: [ShutterClock_設計仕様書_v0.9.md](ShutterClock_設計仕様書_v0.9.md)
+- 設計仕様書（要件・設計判断・未決事項・改版履歴）: [ShutterClock_設計仕様書_v0.10.md](ShutterClock_設計仕様書_v0.10.md)
+- 部品購入リスト（ブレッドボード試作）: [docs/01_parts.md](docs/01_parts.md)（[CSV](docs/01_parts.csv)）
 - SnowGauge から流用したファイルの一覧: [PROVENANCE.md](PROVENANCE.md)
 - 作業引き継ぎ（AI エージェント向け）: [CLAUDE.md](CLAUDE.md)

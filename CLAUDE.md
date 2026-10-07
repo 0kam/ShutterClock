@@ -65,7 +65,7 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.9 lists the open items U1–U29 (§3), the test-shot preview options
+- Spec v0.10 lists the open items U1–U29 (§3), the test-shot preview options
   (§4) and a **draft circuit/BOM (§6, not yet approved as a whole)**.
   Decided: U27 3.5 mm stereo jack + off-the-shelf cables; U14 NJW4181U3-33B
   (Akizuki 113996, SOT-89, 35 V/40 V abs, Iq 9 µA) directly on the PCB.
@@ -73,8 +73,11 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   no overseas mail order.** ShutterClock is assembled by the user, not by
   students, so **SMD parts are fine here** (the through-hole rule is
   SnowGauge's). Camera accessories from domestic shops (Amazon.co.jp etc.).
+- **BOM for the breadboard prototype: `docs/01_parts.md` + `01_parts.csv`**
+  (Akizuki codes/prices/stock verified 2026-10-07; user approved MBC2596-01 over
+  DFR1015 and declined a low-voltage camera test — keep 9 V).
 - Camera 9 V = **Akizuki MBC2596-01 (131750, LM2596-ADJ module, user's pick;
-  trimpot set to 9.4 V, remove its LED) + 5 A Schottky + 4700 µF** (LM2596 peak
+  trimpot set to 9.4 V, remove its LED) + 1N5822 Schottky + 4700 µF** (LM2596 peak
   limit ≥3.4 A, frequency-foldback limiting, no hiccup; shot peaks need
   ≤0.5 mA·s above 3.3 A); fallbacks DFRobot DFR1015 (SS 8601), Pololu
   D30V33MAS (SS 9640). TVS = 2× P4KE15A in series (clamp up to 42 V → 100 Ω +

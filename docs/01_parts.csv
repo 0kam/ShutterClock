@@ -1,0 +1,40 @@
+区分,記号,部品,値/型番,数量,購入先リンク,備考
+回路,A1,マイコン（BLE）,Seeed XIAO nRF52840（非Sense）,1,https://akizukidenshi.com/catalog/g/g117341/,¥1780。予備+1推奨
+回路,U1,3.3V LDO（常時ON）,NJW4181U3-33B (SOT-89),1,https://akizukidenshi.com/catalog/g/g113996/,¥60。表面実装。ブレッドボードではAE-SOT89に載せる
+回路,U2,カメラ用9V降圧,MBC2596-01 (LM2596-ADJ),2,https://akizukidenshi.com/catalog/g/g131750/,¥1900。1個予備。在庫僅少（10月中旬入荷）。9.4Vに調整・LED除去
+回路,"Q1,Q2,Q5",P-ch MOSFET,2SJ334,3,https://akizukidenshi.com/catalog/g/g102846/,¥110。G-D-S
+回路,"Q3,Q6,Q7",N-ch MOSFET,2SK4017(Q),3,https://akizukidenshi.com/catalog/g/g107597/,¥30。G-D-S
+回路,"ZD1,ZD2",15Vツェナー,GDZJ15C 500mW,2,https://akizukidenshi.com/catalog/g/g115169/,10本¥90
+回路,ZD4,12Vツェナー（時計保持フォロワ基準）,BZX55C12 500mW,1,https://akizukidenshi.com/catalog/g/g115722/,20本¥100。低ければ9.1Vに
+回路,"D1,D2",TVS（2本直列）,P4KE15A,2,https://akizukidenshi.com/catalog/g/g129633/,10本¥150
+回路,D4,ショットキー（U2出力逆流防止）,1N5822 40V3A,1,https://akizukidenshi.com/catalog/g/g102229/,10本¥350
+回路,F1,ヒューズ,MF51NR 250V5A 5.2x20mm,1,https://akizukidenshi.com/catalog/g/g107131/,¥40
+回路,F1ホルダ,ヒューズクリップ,FUC-03A,2,https://akizukidenshi.com/catalog/g/g110521/,¥20。2個で1本分
+回路,R3,電流検出抵抗,0.1Ω 3W ±1% RSMF3BR100F,1,https://akizukidenshi.com/catalog/g/g111011/,¥20
+回路,"U3,U4",フォトカプラ,PC817 (PC817X3NSZ1B),2,https://akizukidenshi.com/catalog/g/g113765/,¥30。在庫僅少。代替UPC817CG 116090
+回路,J3,3.5mmステレオジャック,MJ-8435,1,https://akizukidenshi.com/catalog/g/g109060/,¥90
+回路,SW1,タクトスイッチ,6mm DTS-63-N-V-BLK,1,https://akizukidenshi.com/catalog/g/g103647/,¥15
+回路,C1,入力バルク,100μF/50V ハイブリッド Rubycon PZF,1,https://akizukidenshi.com/catalog/g/g116871/,¥80
+回路,C2,U1入力RC,10μF/50V 積セラ 5mm,1,https://akizukidenshi.com/catalog/g/g108155/,¥60
+回路,C3,カメラ9V側バルク,4700μF/16V Rubycon ZLH,1,https://akizukidenshi.com/catalog/g/g114096/,¥100
+回路,C4,U1出力,2.2μF/50V 積セラ 5mm,1,https://akizukidenshi.com/catalog/g/g108152/,¥30
+回路,C5-C8,パスコン,0.1μF/50V 積セラ,4,https://akizukidenshi.com/catalog/g/g113582/,10個¥100
+回路,R4,U1入力RC,100Ω 1/4W,1,https://akizukidenshi.com/catalog/g/g125101/,100本¥200
+回路,"R6,R7",フォトカプラLED直列,470Ω 1/4W,2,https://akizukidenshi.com/catalog/g/g125471/,100本¥200
+回路,"R8,R9",ゲート直列,1kΩ 1/4W,2,https://akizukidenshi.com/catalog/g/g125102/,100本¥100
+回路,"R10-R13,R2",プルダウン/プルアップ/分圧下,100kΩ 1/4W,5,https://akizukidenshi.com/catalog/g/g125104/,100本¥200
+回路,R5,ZD4バイアス,220kΩ 1/4W,1,https://akizukidenshi.com/catalog/g/g125224/,100本¥180
+回路,R1,電池分圧上,1MΩ 1/4W,1,https://akizukidenshi.com/catalog/g/g125105/,100本¥200
+回路,"R14,R15",A1フィルタ/Q1 G-S,10kΩ 1/4W,2,https://akizukidenshi.com/catalog/g/g125103/,100本¥100
+ブレッドボード,-,ブレッドボード830穴,EIC-102BJ,1,https://akizukidenshi.com/catalog/g/g100285/,¥1980
+ブレッドボード,-,ジャンパワイヤ,60本以上セット,1,https://akizukidenshi.com/catalog/g/g130088/,¥300
+ブレッドボード,-,SOT-89変換基板,AE-SOT89,1,https://akizukidenshi.com/catalog/g/g110835/,10枚¥70
+ブレッドボード,-,ピンヘッダ1x40,PH-1x40SG,1,https://akizukidenshi.com/catalog/g/g100167/,¥35
+カメラ側,-,ダミーバッテリー,Nikon EP-5B,1,https://www.amazon.co.jp/dp/B0042VJSN8,¥2318
+カメラ側,-,レリーズケーブル（D7000-D7500）,3.5mm → MC-DC2型（3.5mm-N3）,1,https://www.amazon.co.jp/dp/B0C9YLTTSX,¥926
+カメラ側,-,レリーズケーブル（D800/D810 任意）,2.5mm → 10ピン,1,https://www.amazon.co.jp/dp/B0D49L1SL3,¥1701
+カメラ側,-,変換アダプタ（D800/D810 任意）,2.5mmメス → 3.5mmオス,1,https://www.amazon.co.jp/dp/B00KXMH1UW,¥580
+PCB,"J1,J2",ネジ端子2P 5.08mm,TB111-2,2,https://akizukidenshi.com/catalog/g/g102333/,¥40
+PCB,A1ソケット,ピンソケット1x7,FH-1x7SG/RH,2,https://akizukidenshi.com/catalog/g/g104285/,¥20
+PCB,U2ソケット,ピンソケット1x4,FH-1x4SG/RH,1,https://akizukidenshi.com/catalog/g/g110099/,¥20
+PCB,-,OS-CON 470μF/16V（任意）,16SEPC470M,1,https://akizukidenshi.com/catalog/g/g108292/,¥80
