@@ -65,7 +65,7 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - Repo initialised and pushed (public): https://github.com/0kam/ShutterClock.
   Docs only; nothing copied from SnowGauge yet (`PROVENANCE.md` table is empty).
   GitHub Pages not enabled yet (enable on `docs/` once the page exists).
-- Spec v0.10 lists the open items U1–U29 (§3), the test-shot preview options
+- Spec v0.11 lists the open items U1–U29 (§3), the test-shot preview options
   (§4) and a **draft circuit/BOM (§6, not yet approved as a whole)**.
   Decided: U27 3.5 mm stereo jack + off-the-shelf cables; U14 NJW4181U3-33B
   (Akizuki 113996, SOT-89, 35 V/40 V abs, Iq 9 µA) directly on the PCB.
@@ -73,6 +73,12 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   no overseas mail order.** ShutterClock is assembled by the user, not by
   students, so **SMD parts are fine here** (the through-hole rule is
   SnowGauge's). Camera accessories from domestic shops (Amazon.co.jp etc.).
+- **PCB v1.0 draft generated 2026-10-07** (`pcb/generate_board.py` + `tracks.py`
+  → `ShutterClock.kicad_pcb`, 100 x 88 mm, DRC 0 errors / 0 unconnected, gerber
+  zip + renders in `pcb/`). Not ordered. Before ordering: measure the
+  MBC2596-01 hole positions (placeholder ±19/±8 mm), bench-verify the circuit,
+  independent layout review. Pin map in `pcb/README.md` (CAM_EN = D7,
+  KA_EN = D10, AF = D2, SHUTTER = D8, BTN = D9, A0 battery, A1 camera current).
 - **BOM for the breadboard prototype: `docs/01_parts.md` + `01_parts.csv`**
   (Akizuki codes/prices/stock verified 2026-10-07; user approved MBC2596-01 over
   DFR1015 and declined a low-voltage camera test — keep 9 V).

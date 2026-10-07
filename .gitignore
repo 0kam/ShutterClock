@@ -17,3 +17,8 @@ firmware/build-*.log
 
 # Python
 __pycache__/
+
+# KiCad
+pcb/*.kicad_prl
+pcb/*-backups/
+pcb/fp-info-cache

@@ -1,9 +1,9 @@
 # 01. 部品購入（ShutterClock 部品表 / BOM）
 
-対象: **ブレッドボード試作（2026-10 発注分）**。回路は設計仕様書 v0.10 §6 の草案で、PCB 化の前にブレッドボードで検証します。
+対象: **ブレッドボード試作（2026-10 発注分）**。回路は設計仕様書 v0.11 §6（独立レビュー反映済み）で、PCB 化の前にブレッドボードで検証します。
 購入先は秋月電子を優先し、カメラ側のアクセサリは Amazon.co.jp です。価格・在庫は 2026-10-07 時点（税込）。
 
-> 設計の根拠は [設計仕様書](../ShutterClock_設計仕様書_v0.10.md) §6、電気的なつながりの正は（PCB 設計後）`pcb/README.md` に移します。
+> 設計の根拠は [設計仕様書](../ShutterClock_設計仕様書_v0.11.md) §6、電気的なつながりの正は（PCB 設計後）`pcb/README.md` に移します。
 > 注文用の CSV（同じ内容）: [01_parts.csv](01_parts.csv)
 
 ## 1. 買い方の目安
@@ -26,8 +26,9 @@
 | U2 | カメラ用 9 V 降圧 | **MBC2596-01**（LM2596-ADJ モジュール、入力 4〜35 V、3 A） | 1 | [秋月 131750](https://akizukidenshi.com/catalog/g/g131750/) | ¥1,900 | **在庫僅少、10 月中旬入荷予定**。2 個買って 1 個予備。組立時に出力を **9.4 V** に調整、赤 LED を外す |
 | Q1, Q2, Q5 | P-ch MOSFET（逆接保護 / カメラ電源スイッチ / 時計保持スイッチ） | **2SJ334**（−60 V / −30 A） | 3 | [秋月 102846](https://akizukidenshi.com/catalog/g/g102846/) | ¥110 | ピン G-D-S。10 個入り [115414](https://akizukidenshi.com/catalog/g/g115414/) ¥990 もある |
 | Q3, Q6, Q7 | N-ch MOSFET（Q2/Q5 のゲート駆動 / 時計保持フォロワ） | **2SK4017(Q)**（60 V / 5 A） | 3 | [秋月 107597](https://akizukidenshi.com/catalog/g/g107597/) | ¥30 | ピン G-D-S。在庫あり（10 月上旬入荷予定の表示あり） |
-| ZD1, ZD2 | Q1 / Q2 の G-S 保護 | 15 V ツェナー **GDZJ15C** 500 mW | 2 | [秋月 115169](https://akizukidenshi.com/catalog/g/g115169/) | 10 本 ¥90 | 単品は [107498](https://akizukidenshi.com/catalog/g/g107498/) ¥10 |
-| ZD4 | 時計保持フォロワのゲート基準 | 12 V ツェナー **BZX55C12** 500 mW | 1 | [秋月 115722](https://akizukidenshi.com/catalog/g/g115722/) | 20 本 ¥100 | 出力 ≈ Vz − Vgs ≈ 8.5〜9.5 V。低ければ 9.1 V（BZX55C9V1、20 本 ¥100）に替える。11 V は秋月に無い |
+| ZD1, ZD2, ZD3 | Q1 / Q2 / Q5 の G-S 保護 | 15 V ツェナー **GDZJ15C** 500 mW | 3 | [秋月 115169](https://akizukidenshi.com/catalog/g/g115169/) | 10 本 ¥90 | 単品は [107498](https://akizukidenshi.com/catalog/g/g107498/) ¥10 |
+| ZD4 | 時計保持フォロワのゲート基準 | 9.1 V ツェナー **BZX55C9V1** 500 mW | 1 | [秋月 115721](https://akizukidenshi.com/catalog/g/g115721/) | 20 本 ¥100 | 1N4148 と直列で基準 ≈ 9.7 V → 出力 ≈ 7.3〜8.5 V（10 V ツェナーは秋月に無い） |
+| D6 | ZD4 と直列（+0.6 V） | **1N4148** | 1 | [秋月 100941](https://akizukidenshi.com/catalog/g/g100941/) | 50 本 ¥200 | |
 | D1, D2 | TVS（2 本直列） | **P4KE15A**（400 W、DO-41） | 2 | [秋月 129633](https://akizukidenshi.com/catalog/g/g129633/) | 10 本 ¥150 | 直列でスタンドオフ 25.6 V、クランプ最大約 42 V |
 | D4 | U2 出力の逆流防止 | ショットキー **1N5822**（40 V / 3 A） | 1 | [秋月 102229](https://akizukidenshi.com/catalog/g/g102229/) | 10 本 ¥350 | 5 A のスルーホール品は秋月に無い。4 A のピークは 20〜30 ms なので 3 A 定格で可 |
 | F1 | ヒューズ | ガラス管 **MF51NR 250 V 5 A**（5.2×20 mm） | 1 | [秋月 107131](https://akizukidenshi.com/catalog/g/g107131/) | ¥40 | 普通溶断。タイムラグ 5 A は秋月に無いが、4 A×30 ms のピークは問題なし |
@@ -35,20 +36,23 @@
 | R3 | カメラ電流検出 | **0.1 Ω 3 W ±1 %**（RSMF3BR100F） | 1 | [秋月 111011](https://akizukidenshi.com/catalog/g/g111011/) | ¥20 | 待機 0.42 mA → 42 µV、4 A → 0.4 V。ADC で読む |
 | U3, U4 | フォトカプラ（AF / SHUTTER） | **PC817**（Sharp PC817X3NSZ1B） | 2 | [秋月 113765](https://akizukidenshi.com/catalog/g/g113765/) | ¥30 | 在庫僅少。代替 UPC817CG [116090](https://akizukidenshi.com/catalog/g/g116090/) ¥15 |
 | J3 | レリーズ用ジャック | 3.5 mm ステレオミニジャック **MJ-8435**（基板取付） | 1 | [秋月 109060](https://akizukidenshi.com/catalog/g/g109060/) | ¥90 | 1 = スリーブ、2 = チップ、3 = リング |
+| JP1, JP2 | USB 時に外す / カメラ常時 ON | ピンヘッダ 1×2 + ジャンパピン | 2 | （ピンヘッダは (b) の 1×40 を折る。ジャンパピン [秋月 103691](https://akizukidenshi.com/catalog/g/g103691/) 要確認） | — | JP1 = U1 → XIAO 3V3、JP2 = Q3 D-S |
 | SW1 | テスト撮影 / BLE 起動ボタン | タクトスイッチ 6 mm（DTS-63-N-V-BLK） | 1 | [秋月 103647](https://akizukidenshi.com/catalog/g/g103647/) | ¥15 | |
 | C1 | 入力バルク | **100 µF / 50 V** ハイブリッド（Rubycon PZF） | 1 | [秋月 116871](https://akizukidenshi.com/catalog/g/g116871/) | ¥80 | 安価な代替: ニチコン HE 100 µF/50 V [108440](https://akizukidenshi.com/catalog/g/g108440/) 5 本 ¥100 |
 | C2 | U1 入力（RC の C） | **10 µF / 50 V** 積セラ（5 mm） | 1 | [秋月 108155](https://akizukidenshi.com/catalog/g/g108155/) | ¥60 | |
 | C3 | カメラ 9 V 側バルク | **4,700 µF / 16 V**（Rubycon ZLH） | 1 | [秋月 114096](https://akizukidenshi.com/catalog/g/g114096/) | ¥100 | φ16×25 mm。ピーク補償 |
 | C4 | U1 出力 | **2.2 µF / 50 V** 積セラ（5 mm） | 1 | [秋月 108152](https://akizukidenshi.com/catalog/g/g108152/) | ¥30 | NJW4181 の指定値以上 |
-| C5〜C8 | パスコン・ADC フィルタ | **0.1 µF / 50 V** 積セラ | 4 | [秋月 113582](https://akizukidenshi.com/catalog/g/g113582/) | 10 個 ¥100 | U1 入力、XIAO、A0、A1 |
+| C6〜C8 | XIAO パスコン・ADC フィルタ | **0.1 µF / 50 V** 積セラ | 3 | [秋月 113582](https://akizukidenshi.com/catalog/g/g113582/) | 10 個 ¥100 | U1 入力、XIAO、A0、A1 |
 | R4 | U1 入力（RC の R） | **100 Ω** 1/4 W | 1 | [秋月 125101](https://akizukidenshi.com/catalog/g/g125101/) | 100 本 ¥200 | |
-| R6, R7 | フォトカプラ LED 直列 | **470 Ω** 1/4 W | 2 | [秋月 125471](https://akizukidenshi.com/catalog/g/g125471/) | 100 本 ¥200 | 約 4 mA |
-| R8, R9 | Q3 / Q6 ゲート直列 | **1 kΩ** 1/4 W | 2 | [秋月 125102](https://akizukidenshi.com/catalog/g/g125102/) | 100 本 ¥100 | |
+| R20, R21 | J3 チップ / リング直列（保護） | **100 Ω** 1/4 W | 2 | （R4 と同じ袋） | — | |
+| R6〜R9 | フォトカプラ LED 直列 / Q3・Q6 ゲート直列 | **1 kΩ** 1/4 W | 4 | [秋月 125102](https://akizukidenshi.com/catalog/g/g125102/) | 100 本 ¥100 | |
 | R10〜R13 | Q3 / Q6 プルダウン、Q2 / Q5 G-S プルアップ | **100 kΩ** 1/4 W | 4 | [秋月 125104](https://akizukidenshi.com/catalog/g/g125104/) | 100 本 ¥200 | SnowGauge の R4/R5 と同じ |
-| R5 | ZD4 バイアス | **220 kΩ** 1/4 W | 1 | [秋月 125224](https://akizukidenshi.com/catalog/g/g125224/) | 100 本 ¥180 | 約 10 µA |
-| R1 | 電池分圧（上） | **1 MΩ** 1/4 W | 1 | [秋月 125105](https://akizukidenshi.com/catalog/g/g125105/) | 100 本 ¥200 | |
+| R5 | ZD4 バイアス（KA_SW から） | **47 kΩ** 1/4 W | 1 | [秋月 125473](https://akizukidenshi.com/catalog/g/g125473/) | 100 本 ¥200 | 約 60 µA、Q5 ON 中のみ。コード要確認 |
+| R16, R18 | Q2 / Q5 ゲート直列（ツェナー電流制限） | **33 kΩ** 1/4 W | 2 | [秋月 125333](https://akizukidenshi.com/catalog/g/g125333/) | 100 本 ¥200 | レビュー BLOCKER 1 の修正 |
+| R19 | Q7 ドレイン（突入電流制限） | **10 Ω 1 W** カーボン | 1 | [秋月 107956](https://akizukidenshi.com/catalog/g/g107956/) | 100 本 ¥350 | 4,700 µF への突入 ≤ 1.3 A |
+| R1, R15, R17 | 電池分圧（上）/ Q1 ゲート / C3 ブリーダ | **1 MΩ** 1/4 W | 3 | [秋月 125105](https://akizukidenshi.com/catalog/g/g125105/) | 100 本 ¥200 | |
 | R2 | 電池分圧（下） | **100 kΩ** 1/4 W | 1 | （R10〜R13 と同じ袋） | — | 30 V 入力で ADC ノード 2.7 V |
-| R14, R15 | A1 の RC フィルタ、Q1 G-S | **10 kΩ** 1/4 W | 2 | [秋月 125103](https://akizukidenshi.com/catalog/g/g125103/) | 100 本 ¥100 | |
+| R14 | A1 の RC フィルタ | **10 kΩ** 1/4 W | 1 | [秋月 125103](https://akizukidenshi.com/catalog/g/g125103/) | 100 本 ¥100 | |
 
 ### (b) ブレッドボード用（試作のみ）
 
