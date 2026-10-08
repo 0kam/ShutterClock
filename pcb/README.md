@@ -1,4 +1,4 @@
-# ShutterClock PCB v1.0 (draft, not yet ordered)
+# ShutterClock PCB v1.0 (ordered 2026-10-08, JLCPCB W2026100808086019 / Y14-13437881A, 5 pcs)
 
 - Board: **100 x 88 mm**, 2-layer. Bottom layer is a GND pour; most signals on top,
   the VIN trunk and a few long signals on the bottom.
@@ -11,10 +11,10 @@
 - Gerbers: `ShutterClock_v1.0_gerbers.zip` (JLCPCB: 2 layers, 1.6 mm, HASL, defaults). Renders: `render_top.png`, `render_bottom.png`.
 - Circuit: spec v0.11 §6 (independent review applied). BOM: `../docs/01_parts.md`.
 
-## Before ordering (open items)
+## Open items (ordered before bench verification — check these when the boards arrive)
 
-1. **U2 (MBC2596-01) hole positions are a placeholder** (±19.0 / ±8.0 mm from the module
-   centre). Measure the real module and update `fp_buck()` in `generate_board.py`.
+1. U2 (MBC2596-01) hole positions (±19.0 / ±8.0 mm from the module centre) were judged
+   correct by the user from the module photo; confirm with the real module on the bare board.
 2. Bench-verify the circuit on the breadboard first (spec §6.5): LM2596 + 4700 µF with the
    D7500 (and D7200), keep-alive follower voltage, shot detection on A1.
 3. Independent layout review (as for SnowGauge v1.2) — not done yet.
