@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const APP_VERSION = '2026-10-11a';
+const APP_VERSION = '2026-10-11b';
 
 /* ---------- project schemas ---------- */
 
