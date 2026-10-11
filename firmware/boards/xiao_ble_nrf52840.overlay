@@ -1,0 +1,126 @@
+/*
+ * ShutterClock board overlay for Seeed XIAO nRF52840 (non-Sense) on PCB v1.0.
+ * Pin map source of truth: pcb/README.md
+ *
+ *   A0  (P0.02) ADC_NODE   VIN x 100k/(1M+100k), ungated, 100 nF
+ *   A1  (P0.03) A1_NODE    camera return current: 0.1 ohm shunt, 10k + 100 nF
+ *   D2  (P0.28) AF_DRV     PC817 U4 -> jack ring (half press)
+ *   D7  (P1.12) CAM_EN     Q3 -> Q2 -> buck module (camera 9 V)
+ *   D8  (P1.13) SHUT_DRV   PC817 U3 -> jack tip (full press)
+ *   D9  (P1.14) BTN        test-shot button to GND
+ *   D10 (P1.15) KA_EN      Q6 -> Q5 -> keep-alive follower
+ */
+
+#include <zephyr/dt-bindings/adc/adc.h>
+#include <zephyr/dt-bindings/adc/nrf-adc.h>
+
+/ {
+	zephyr,user {
+		cam-en-gpios = <&xiao_d 7 GPIO_ACTIVE_HIGH>;
+		ka-en-gpios = <&xiao_d 10 GPIO_ACTIVE_HIGH>;
+		af-gpios = <&xiao_d 2 GPIO_ACTIVE_HIGH>;
+		shutter-gpios = <&xiao_d 8 GPIO_ACTIVE_HIGH>;
+		button-gpios = <&xiao_d 9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		io-channels = <&adc 0>, <&adc 1>;
+	};
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	/* Battery divider: node = VIN / 11, 2.7 V at 30 V. FS 0.6 V x 6 = 3.6 V. */
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_6";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
+		zephyr,input-positive = <NRF_SAADC_AIN0>;
+		zephyr,resolution = <12>;
+		zephyr,oversampling = <4>;
+	};
+
+	/* Camera current: 0.1 ohm shunt, FS 0.6 V = 6 A, 1.46 mA/LSB at 12 bit. */
+	channel@1 {
+		reg = <1>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>;
+		zephyr,resolution = <12>;
+		zephyr,oversampling = <2>;
+	};
+};
+
+/* nRF52 die temperature (record field temp_dc). */
+&temp {
+	status = "okay";
+};
+
+/*
+ * Record storage: QSPI (2 MB P25Q16H), one LittleFS partition over the whole
+ * chip; runtime PM keeps the chip in deep power-down between accesses.
+ */
+&p25q16h {
+	zephyr,pm-device-runtime-auto;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		lfs1_part: partition@0 {
+			label = "lfs";
+			reg = <0x00000000 0x00200000>;
+		};
+	};
+};
+
+/ {
+	fstab {
+		compatible = "zephyr,fstab";
+
+		lfs1: lfs1 {
+			compatible = "zephyr,fstab,littlefs";
+			mount-point = "/lfs1";
+			partition = <&lfs1_part>;
+			read-size = <16>;
+			prog-size = <16>;
+			cache-size = <64>;
+			lookahead-size = <32>;
+			block-cycles = <512>;
+		};
+	};
+
+	/* Emulated calendar clock behind the `rtc` alias (timekeeping.c, mcumgr datetime). */
+	rtc_emul: rtc-emul {
+		compatible = "zephyr,rtc-emul";
+		status = "okay";
+	};
+
+	aliases {
+		rtc = &rtc_emul;
+	};
+};
+
+/*
+ * Internal flash (1 MB), same layout as SnowGauge:
+ *   0x00000  156 kB  Adafruit bootloader + SoftDevice area (untouched)
+ *   0x27000  480 kB  Application (this image)
+ *   0x9F000  308 kB  mirror_partition (raw append-only records)
+ *   0xEC000   32 kB  storage_partition (settings)
+ *   0xF4000   48 kB  bootloader UF2 area (untouched)
+ */
+&code_partition {
+	reg = <0x00027000 0x00078000>;
+};
+
+&flash0 {
+	partitions {
+		mirror_partition: partition@9f000 {
+			label = "mirror";
+			reg = <0x0009f000 0x0004d000>;
+		};
+	};
+};

@@ -1,0 +1,79 @@
+# ShutterClock firmware options
+
+menu "ShutterClock"
+
+config SHUTTERCLOCK_AUTO_PERIOD_S
+	int "Automatic trigger period at boot (s, 0 = schedule / shell only)"
+	default 0
+	help
+	  When non-zero the firmware runs a full shot sequence every N seconds
+	  without any shell interaction (bench). Can be changed at run time
+	  with the 'auto' shell command.
+
+config SHUTTERCLOCK_VBAT_GAIN_PERMILLE
+	int "Battery divider trim (per mille, 1000 = nominal 1 M / 100 k)"
+	default 1000
+	range 900 1100
+	help
+	  Per-board correction of the x11 divider (resistor tolerance + SAADC
+	  gain). Measure VIN with a DMM, compare with 'batt', adjust.
+
+config SHUTTERCLOCK_BLE_ADV_INT_MIN_MS
+	int "BLE advertising interval, minimum (ms)"
+	default 1000
+	range 20 10240
+
+config SHUTTERCLOCK_BLE_ADV_INT_MAX_MS
+	int "BLE advertising interval, maximum (ms)"
+	default 2000
+	range 20 10240
+
+config SHUTTERCLOCK_BOOT_HOLDOFF_MIN
+	int "Delay of the first scheduled shot after a reset (min)"
+	default 10
+	help
+	  A reset restores the clock from the last record, which would make the
+	  scheduler fire immediately (and again after every brown-out reset).
+	  The first scheduled shot is held off by this many minutes, multiplied
+	  by the number of resets within the last hold-off window.
+
+config SHUTTERCLOCK_BOOT_MAX_RESETS
+	int "Consecutive resets after which scheduled shots are halted"
+	default 12
+	range 2 15
+
+config SHUTTERCLOCK_WDT_TIMEOUT_S
+	int "Hardware watchdog timeout (s)"
+	default 120
+	range 30 3600
+	help
+	  Must be longer than the bootloader start-up and the longest shot
+	  sequence (boot + release + write timeout, < 60 s).
+
+config SHUTTERCLOCK_TIME_SAVE_MIN
+	int "Clock checkpoint period in NVS (min, 0 = off)"
+	default 60
+
+config SHUTTERCLOCK_SCHED_DEFAULT_START_MIN
+	int "Default window start (local minutes of day)"
+	default 420
+	help
+	  07:00. Overridden by the stored sc/sched/* settings.
+
+config SHUTTERCLOCK_SCHED_DEFAULT_END_MIN
+	int "Default window end (local minutes of day)"
+	default 1080
+	help
+	  18:00. Overridden by the stored sc/sched/* settings.
+
+config SHUTTERCLOCK_SCHED_DEFAULT_INTERVAL_MIN
+	int "Default trigger interval until configured (min, 0 = off)"
+	default 60
+
+config SHUTTERCLOCK_SCHED_DEFAULT_TZ_MIN
+	int "Default UTC offset of the site (min)"
+	default 540
+
+endmenu
+
+source "Kconfig.zephyr"
