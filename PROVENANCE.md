@@ -28,3 +28,8 @@ Add a row whenever a file is copied; update "Changes" when it diverges.
 | `firmware/Kconfig` | `firmware/Kconfig` | `36e21f8` | rewritten (SHUTTERCLOCK_* options) |
 | `firmware/boards/xiao_ble_nrf52840.overlay` | `firmware/boards/xiao_ble_nrf52840_sense.overlay` | `36e21f8` | from xiao_ble_nrf52840_sense.overlay: new GPIO/ADC map, no IMU, temp sensor; flash/fs/rtc layout unchanged |
 | `firmware/src/camera.c/.h` | (new; replaces sensor_rail.c + measure.c) | — | camera power / keep-alive / release / current sense |
+| `docs/app/cbor.js` | `docs/app/cbor.js` | `36e21f8` | unchanged |
+| `docs/app/smp.js` | `docs/app/smp.js` | `36e21f8` | unchanged |
+| `docs/app/sw.js` | `docs/app/sw.js` | `36e21f8` | cache name, no logo file |
+| `docs/app/index.html`, `app.js` | `docs/app/index.html`, `app.js` | `36e21f8` | rewritten: ShutterClock schemas, shot GATT panel, text header instead of the logo |
+| `docs/app/manifest.webmanifest` | same | `36e21f8` | name / colours |
