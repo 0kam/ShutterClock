@@ -62,6 +62,12 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 
 ## Current state (2026-10-06)
 
+- **Parts and PCBs arrived 2026-10-16; assembly guide `docs/02_assembly.md`** (placement map
+  `docs/assembly/placement_top.png` generated from the .kicad_pcb by
+  `docs/assembly/extract_board.py` (KiCad python) + `draw_placement.py` (matplotlib); 8 soldering
+  steps, 14 power-up checks). **PCB v1.0 erratum: C1 "+" silk is on the GND pad** (pad-1 net
+  swapped in generate_board.py) — C1 + goes in the right pad; fix in v1.1 (`pcb/README.md` Errata).
+- Logo/icons (2026-10-11): `docs/assets/logo/` (Codex image_gen, SnowGauge style; drafts kept).
 - Repo: https://github.com/0kam/ShutterClock (public). GitHub Pages on `docs/`
   enabled 2026-10-11 → https://0kam.github.io/ShutterClock/app/ (`?demo=1` demo).
 - **Firmware v0 (2026-10-11): SnowGauge port in `firmware/`, builds with NCS
@@ -74,7 +80,7 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   schemas (record, settings pickers incl. advanced camera timing), shot GATT
   panel (live, camera hold, test shot, AF only, ERASE). Verified only in demo
   mode in the browser.
-- Spec v0.13 lists the open items U1–U29 (§3), the test-shot preview options
+- Spec v0.14 lists the open items U1–U29 (§3), the test-shot preview options
   (§4) and a **draft circuit/BOM (§6, not yet approved as a whole)**.
   Decided: U27 3.5 mm stereo jack + off-the-shelf cables; U14 NJW4181U3-33B
   (Akizuki 113996, SOT-89, 35 V/40 V abs, Iq 9 µA) directly on the PCB.
