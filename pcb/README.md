@@ -17,11 +17,18 @@
    pad, which the KiCad `CP_Radial` footprint marks "+") to GND and pad 2 to VIN. Electrically the
    board is fine; **mount C1 with its + lead in the right-hand (round) pad**. v1.1: swap the nets
    to `{"1": "VIN", "2": "GND"}` and re-route the two C1 tracks. C3 is correct (pad 1 = CAM_P).
+2. **U2 (MBC2596-01) hole pattern is 40.0 x 17.5 mm** (measured on the real module 2026-10-19),
+   not the 38 x 16 mm placeholder (±19.0 / ±8.0). v1.0 boards: the module is connected with bent
+   tinned wire. v1.1: `fp_buck()` pads at ±20.0 / ±8.75 mm.
+3. **F1 fuse clips (FUC-03A): the two pins of one clip lie ALONG the fuse axis**, not across it as
+   in `fp_fuseclips()` (pairs 6.7 mm apart across the axis). v1.0 boards: cut one pin per clip and
+   solder the other into one hole (keep the outer pin on one clip and the inner pin on the other
+   so the clip spacing stays 18 mm), or put an inline fuse holder in the battery + lead and bridge
+   the F1 holes. v1.1: rotate the footprint; pin pitch along the axis still to be measured.
 
 ## Open items (ordered before bench verification — check these when the boards arrive)
 
-1. U2 (MBC2596-01) hole positions (±19.0 / ±8.0 mm from the module centre) were judged
-   correct by the user from the module photo; confirm with the real module on the bare board.
+1. ~~U2 hole positions~~ → wrong, see Errata 2.
 2. Bench-verify the circuit on the breadboard first (spec §6.5): LM2596 + 4700 µF with the
    D7500 (and D7200), keep-alive follower voltage, shot detection on A1.
 3. Independent layout review (as for SnowGauge v1.2) — not done yet.
