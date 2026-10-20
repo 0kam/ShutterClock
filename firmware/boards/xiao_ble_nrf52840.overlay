@@ -14,6 +14,23 @@
 #include <zephyr/dt-bindings/adc/adc.h>
 #include <zephyr/dt-bindings/adc/nrf-adc.h>
 
+/*
+ * The board DTS enables uart0 (D6/D7), spi2 (D8/D9/D10) and i2c1 (D4/D5).
+ * Their pinctrl would claim CAM_EN, SHUTTER, BTN and KA_EN, so the GPIO
+ * outputs never reach the pins (found on the first board, 2026-10-20).
+ */
+&uart0 {
+	status = "disabled";
+};
+
+&spi2 {
+	status = "disabled";
+};
+
+&i2c1 {
+	status = "disabled";
+};
+
 / {
 	zephyr,user {
 		cam-en-gpios = <&xiao_d 7 GPIO_ACTIVE_HIGH>;
