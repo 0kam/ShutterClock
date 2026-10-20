@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const APP_VERSION = '2026-10-11b';
+const APP_VERSION = '2026-10-20a';
 
 /* ---------- project schemas ---------- */
 
@@ -124,7 +124,7 @@ function busy(btn, fn) {
     const label = btn.textContent; setAllEnabled(false); btn.textContent = '処理中…';
     try { const r = await fn(); if (r !== false) toast('完了'); }
     catch (e) { log(e.message, 'err'); toast('失敗: ' + e.message, 'err'); }
-    finally { busyDepth--; btn.textContent = label; setAllEnabled(!!(state.smp && state.smp.connected)); $('btn-csv').disabled = $('btn-raw').disabled = state.records.length === 0; updateEraseButton(); }
+    finally { busyDepth--; btn.textContent = label; setAllEnabled(!!(state.smp && state.smp.connected)); $('btn-csv').disabled = $('btn-raw').disabled = state.records.length === 0; updateEraseButton(); updateCamButton(); }
   };
 }
 function updateEraseButton() {
@@ -136,7 +136,7 @@ function csvEscape(v) { if (v === null || v === undefined) return ''; const s = 
 
 /* ---------- state ---------- */
 
-const state = { device: null, smp: null, shot: null, site: null, settings: {}, records: [], rawFiles: {}, deviceId: '', timeOk: false, downloadedThisSession: false };
+const state = { device: null, smp: null, shot: null, camPowered: false, camAlwaysOn: false, site: null, settings: {}, records: [], rawFiles: {}, deviceId: '', timeOk: false, downloadedThisSession: false };
 
 /* ---------- connection ---------- */
 
@@ -154,7 +154,7 @@ async function connect() {
     setConnected(true);
     log('接続: ' + device.name); toast('接続しました');
     await refreshStatus();
-    try { await shotStatus(); } catch (e) { log('状態取得: ' + e.message, 'warn'); }
+    try { await liveOn(); } catch (e) { log('カメラ状態の取得: ' + e.message, 'warn'); }
   } catch (e) { log('接続失敗: ' + e.message, 'err'); toast('接続失敗', 'err'); }
   b.disabled = false; b.textContent = '接続';
 }
@@ -162,7 +162,7 @@ function setConnected(on) {
   $('btn-connect').hidden = on; $('btn-disconnect').hidden = !on;
   $('conn-state').textContent = on ? state.deviceId : '未接続';
   document.querySelectorAll('.needs-conn').forEach(el => el.disabled = !on);
-  if (!on) { state.shot = null; state.downloadedThisSession = false; $('live-state').textContent = '停止'; $('cam-state').textContent = '-'; }
+  if (!on) { state.shot = null; state.downloadedThisSession = false; state.camPowered = false; $('cam-state').textContent = '-'; $('live-vbat').textContent = '---'; $('live-ma').textContent = '---'; updateCamButton(); }
   updateEraseButton();
 }
 async function refreshStatus() {
@@ -406,12 +406,24 @@ function exportRaw() {
 
 /* ---------- installation / test shot (custom GATT) ---------- */
 
-function camStateText(st) {
-  const parts = [];
-  parts.push(st & 1 ? '電源 ON' : '電源 OFF');
-  if (st & 2) parts.push('時計保持通電中');
-  if (st & 8) parts.push('常時給電モード');
-  return parts.join('、');
+function camStateText(st, hold) {
+  if (st & 8) return '常時給電（常に ON）';
+  if (st & 1) return 'ON' + (hold ? `（あと ${Math.ceil(hold / 60)} 分で自動 OFF）` : '');
+  if (st & 2) return '時計保持中（撮影後の充電。カメラは待機）';
+  return 'OFF';
+}
+function updateCamUi(st, hold, vbat, ma) {
+  state.camPowered = !!(st & 1); state.camAlwaysOn = !!(st & 8);
+  $('cam-state').textContent = camStateText(st, hold);
+  if (vbat !== undefined) $('live-vbat').textContent = (vbat / 1000).toFixed(2);
+  if (ma !== undefined) $('live-ma').textContent = ma;
+  updateCamButton();
+}
+function updateCamButton() {
+  const b = $('btn-cam-toggle');
+  if (state.camAlwaysOn) { b.textContent = '常時給電モード（常に ON）'; b.disabled = true; return; }
+  b.textContent = state.camPowered ? 'カメラ電源を OFF にする' : 'カメラ電源を ON にする';
+  b.className = 'needs-conn' + (state.camPowered ? ' secondary' : '');
 }
 async function shotConnect() {
   if (state.shot) return state.shot;
@@ -424,8 +436,7 @@ async function shotConnect() {
   live.addEventListener('characteristicvaluechanged', ev => {
     const dv = ev.target.value;
     const vbat = dv.getUint16(0, true), ma = dv.getUint16(2, true), st = dv.getUint8(4), hold = dv.getUint16(5, true);
-    $('live-vbat').textContent = (vbat / 1000).toFixed(2); $('live-ma').textContent = ma;
-    $('cam-state').textContent = camStateText(st) + (hold ? `（あと ${Math.ceil(hold / 60)} 分）` : '');
+    updateCamUi(st, hold, vbat, ma);
   });
   await live.startNotifications();
   state.shot = { live, ctrl, status };
@@ -436,9 +447,7 @@ async function shotStatus() {
   const c = await shotConnect(); const dv = await c.status.readValue();
   const st = dv.getUint8(0), res = dv.getInt8(1), busyFlag = dv.getUint8(2), seq = dv.getUint8(3);
   const vbat = dv.getUint16(4, true), ma = dv.getUint16(6, true), peak = dv.getUint16(8, true), awake = dv.getUint16(10, true), hold = dv.getUint16(12, true);
-  $('live-state').textContent = st & 4 ? '動作中（5 分で自動停止）' : '停止';
-  $('cam-state').textContent = camStateText(st) + (hold ? `（あと ${Math.ceil(hold / 60)} 分）` : '');
-  $('live-vbat').textContent = (vbat / 1000).toFixed(2); $('live-ma').textContent = ma; $('live-peak').textContent = peak || '---';
+  updateCamUi(st, hold, vbat, ma);
   return { st, res, busy: busyFlag, seq, vbat, ma, peak, awake, hold };
 }
 /* Send a control command and wait for the device to finish it (busy flag + seq). */
@@ -457,15 +466,22 @@ async function shotRun(bytes, timeoutMs = 15000) {
   }
   return st;
 }
-async function liveOn() { await shotRun([0x01], 5000); }
-async function liveOff() { await shotRun([0x00], 5000); }
+/* Live status (battery, camera current, camera state) streams while connected; the device stops it on disconnect. */
+async function liveOn() { const st = await shotStatus(); if (!(st.st & 4)) await shotRun([0x01], 5000); }
 async function testShot() {
-  log('テスト撮影中（最大 30 秒）');
-  const st = await shotRun([0x10], 60000);
-  log(`撮影: ピーク ${st.peak} mA、待機まで ${st.awake === 0xffff ? 'タイムアウト' : (st.awake / 1000).toFixed(1) + ' 秒'}`);
+  const r = $('shot-result'); r.className = 'status'; r.textContent = '撮影中…（最大 30 秒）';
+  try {
+    const st = await shotRun([0x10], 60000);
+    const awake = st.awake === 0xffff ? '待機に戻らず（書き込みタイムアウト）' : `待機まで ${(st.awake / 1000).toFixed(1)} 秒`;
+    r.className = 'status ok'; r.textContent = `撮影を検出しました: ピーク ${(st.peak / 1000).toFixed(2)} A、${awake}`;
+    log(`テスト撮影: ピーク ${st.peak} mA、${awake}`);
+  } catch (e) { r.className = 'status err'; r.textContent = '失敗: ' + e.message; throw e; }
 }
-async function camHold(min) { await shotRun([0x11, min & 255, min >> 8], 5000); }
-async function afOnly() { await shotRun([0x12], 8000); }
+async function camHold(min) { await shotRun([0x11, min & 255, min >> 8], 5000); await liveOn(); }
+async function camToggle() {
+  if (state.camPowered) { await camHold(0); toast('カメラ電源を OFF にしました'); }
+  else { await camHold(60); toast('カメラ電源 ON（60 分で自動 OFF）'); }
+}
 /* Two taps at least 1.5 s apart (glove bounce / impatient re-taps do not count), within 6 s. */
 function twoTap(btn, label, action) {
   const now = Date.now();
@@ -517,8 +533,7 @@ function enterDemo() {
     if (def.kind === 'hhmm') setSelectValue($('set-' + def.key), v, hhmm); else setSelectValue($('set-' + def.key), v, x => String(x));
   }
   $('tz-info').textContent = 'UTC+09:00（同期時にスマホから自動設定）';
-  $('cam-state').textContent = '電源 OFF'; $('live-state').textContent = '停止';
-  $('live-vbat').textContent = '12.63'; $('live-ma').textContent = 0; $('live-peak').textContent = 3080;
+  updateCamUi(0, 0, 12630, 0);
   $('dl-progress').textContent = '合計 ' + state.records.length + ' 件（デモデータ）';
   renderData(); updateEraseButton();
   log('デモ表示モード: 本体には接続していません。?demo=1 を外すと通常動作に戻ります', 'warn');
@@ -544,14 +559,9 @@ if (typeof window !== 'undefined') window.addEventListener('load', () => {
   $('btn-showall').onclick = () => { state.showAll = !state.showAll; renderData(); };
   $('btn-csv').onclick = () => { exportCSV(); toast('CSV をもう一度保存しました'); };
   $('btn-raw').onclick = () => { exportRaw(); toast('生データを保存しました'); };
-  $('btn-live-on').onclick = busy($('btn-live-on'), liveOn); $('btn-live-off').onclick = busy($('btn-live-off'), liveOff);
-  $('btn-cal-status').onclick = busy($('btn-cal-status'), shotStatus);
-  $('btn-cam-on').onclick = busy($('btn-cam-on'), () => camHold(parseInt($('hold-sel').value, 10)));
-  $('btn-cam-off').onclick = busy($('btn-cam-off'), () => camHold(0));
+  $('btn-cam-toggle').onclick = busy($('btn-cam-toggle'), camToggle);
   $('btn-shot').onclick = () => twoTap($('btn-shot'), 'テスト撮影', busy($('btn-shot'), testShot));
-  $('btn-af').onclick = busy($('btn-af'), afOnly);
   $('btn-erase').onclick = () => twoTap($('btn-erase'), '全レコード消去', busy($('btn-erase'), doErase));
-  $('hold-sel').innerHTML = [[5, '5 分'], [10, '10 分'], [20, '20 分'], [30, '30 分'], [60, '60 分']].map(([v, l]) => `<option value="${v}"${v === 10 ? ' selected' : ''}>${l}</option>`).join('');
   window.addEventListener('resize', () => state.records.length && drawChart());
   $('app-version').textContent = 'アプリ版 ' + APP_VERSION;
   if (new URLSearchParams(location.search).get('demo')) { setTimeout(enterDemo, 50); }

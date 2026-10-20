@@ -92,20 +92,12 @@
 
 <section>
   <h2>4. 設置・テスト撮影</h2>
-  <div class="status">カメラ: <span id="cam-state">-</span><br>ライブ: <span id="live-state">停止</span></div>
-  <div class="live">
-    <div>電池 V<b id="live-vbat">---</b></div>
-    <div>カメラ電流 mA<b id="live-ma">---</b></div>
-    <div>前回ピーク mA<b id="live-peak">---</b></div>
-  </div>
-  <div class="row"><button id="btn-live-on" class="needs-conn" disabled>ライブ開始</button><button id="btn-live-off" class="needs-conn secondary" disabled>ライブ停止</button></div>
-  <div class="row"><select id="hold-sel" class="needs-conn big" disabled></select><button id="btn-cam-on" class="needs-conn" disabled>カメラ電源 ON</button></div>
-  <button id="btn-cam-off" class="needs-conn secondary" disabled>カメラ電源 OFF</button>
-  <div class="help">フレーミング中はカメラ電源を ON にします（時間が来ると自動で OFF）。常時給電モードでは常に ON です。</div>
+  <div class="status">カメラ電源: <span id="cam-state" class="value">-</span><br>電池 <span id="live-vbat" class="value">---</span> V ・ カメラ電流 <span id="live-ma" class="value">---</span> mA</div>
+  <button id="btn-cam-toggle" class="needs-conn" disabled>カメラ電源を ON にする</button>
+  <div class="help">フレーミングやカメラ側の設定変更のときに使います。60 分で自動的に OFF、アプリを切断したときも OFF になります（常時給電モードでは常に ON）。</div>
   <button id="btn-shot" class="needs-conn" disabled>テスト撮影</button>
-  <button id="btn-af" class="needs-conn secondary" disabled>AF のみ（半押し 2 秒）</button>
-  <div class="help">テスト撮影は本番と同じ手順（電源 → AF → シャッター → 待機まで待つ）で、レコードに「手動」として残ります。</div>
-  <button id="btn-cal-status" class="needs-conn secondary" disabled>状態更新</button>
+  <div id="shot-result" class="status"></div>
+  <div class="help">本番と同じ手順で 1 枚撮ります（電源 → レリーズ → 書き込み完了まで約 15 秒）。結果はここに出て、記録にも「手動」として残ります。撮影後は時計用電池の充電のため、設定の「時計保持」の分数だけカメラが待機のまま通電されます。</div>
   <button id="btn-erase" class="needs-conn danger" disabled>全レコード消去</button>
   <div id="erase-help" class="help"></div>
 </section>

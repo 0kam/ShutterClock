@@ -18,5 +18,4 @@ Files: `cbor.js`, `smp.js`, `sw.js` (copied from SnowGauge, see PROVENANCE.md),
 Panels: 1 同期 / 2 撮影ログ (download → CSV, battery chart, per-shot table with
 quality flags) / 3 撮影スケジュール・カメラ設定 (window, interval, power mode,
 keep-alive, shots per trigger; advanced timing under a disclosure) / 4 設置・
-テスト撮影 (live vbat + camera current, camera on for N minutes, test shot, AF
-only, ERASE after download).
+テスト撮影 (camera state / battery / current streamed while connected, one camera power toggle (60 min auto-off, off on disconnect), test shot with result, ERASE after download).

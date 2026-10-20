@@ -146,8 +146,9 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	ARG_UNUSED(conn);
 	connected = false;
 	LOG_INF("BLE disconnected (reason 0x%02x)", reason);
-	/* The phone went away: stop the live notifications. */
+	/* The phone went away: stop the live notifications, drop an app-started camera hold. */
 	shot_live_stop();
+	shot_gatt_on_disconnect();
 	k_work_schedule(&adv_restart_work, K_MSEC(200));
 }
 

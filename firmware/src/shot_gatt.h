@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define SHOT_LIVE_TIMEOUT_S 300
+#define SHOT_LIVE_TIMEOUT_S 7200 /* the app keeps live on while connected */
 
 #define SHOT_STATE_CAM_POWERED  BIT(0)
 #define SHOT_STATE_KEEPALIVE    BIT(1)
@@ -35,6 +35,8 @@
 int shot_gatt_init(void);
 bool shot_live_is_on(void);
 void shot_live_stop(void);
+/* BLE link dropped: switch off a camera hold that the app started (nobody is framing any more). */
+void shot_gatt_on_disconnect(void);
 
 /* fs mgmt hook: a record file was read since boot (unlocks ERASE). */
 void shot_note_records_downloaded(void);

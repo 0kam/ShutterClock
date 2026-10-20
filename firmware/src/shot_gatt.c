@@ -50,6 +50,30 @@ static void cmd_work_fn(struct k_work *work);
 static K_WORK_DEFINE(cmd_work, cmd_work_fn);
 static uint8_t pending_cmd;
 static uint16_t pending_arg;
+static bool hold_from_app;
+
+static void app_hold_off_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	if (!hold_from_app) {
+		return;
+	}
+	hold_from_app = false;
+	k_mutex_lock(&camera_lock, K_FOREVER);
+	if (camera_hold_left_s() > 0) {
+		LOG_WRN("BLE gone while the camera was held on by the app - power off");
+		(void)camera_hold(0);
+	}
+	k_mutex_unlock(&camera_lock);
+}
+static K_WORK_DEFINE(app_hold_off_work, app_hold_off_work_fn);
+
+void shot_gatt_on_disconnect(void)
+{
+	if (hold_from_app) {
+		k_work_submit_to_queue(&shot_wq, &app_hold_off_work);
+	}
+}
 
 static uint8_t state_byte(void)
 {
@@ -237,6 +261,7 @@ static void cmd_work_fn(struct k_work *work)
 		k_mutex_lock(&camera_lock, K_FOREVER);
 		ret = camera_hold(pending_arg);
 		k_mutex_unlock(&camera_lock);
+		hold_from_app = (ret == 0 && pending_arg > 0);
 		break;
 	case CMD_AF_ONLY:
 		k_mutex_lock(&camera_lock, K_FOREVER);
