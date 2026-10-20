@@ -69,7 +69,7 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   swapped in generate_board.py) — C1 + goes in the right pad; **U2 holes are 40 x 17.5 mm** (board
   has 38 x 16, bridged with tinned wire); **F1 clip pins run along the fuse axis** (footprint has
   them across; one pin per clip cut). All in `pcb/README.md` Errata, fix in v1.1 (FUC-03A pin pitch
-  still to measure). Assembly in progress (user, 2026-10-19).
+  still to measure). Board #1 assembled and bench-tested 2026-10-20 with the D7500: full shot sequence works (peak 2.87 A, shot detected, awake 9.4 s), keep-alive 8.1 V; log in `docs/measurements/2026-10-20_bench_board1.md`. Remaining: sleep current (picowatt), app end-to-end on the phone.
 - Logo/icons (2026-10-11): `docs/assets/logo/` (Codex image_gen, SnowGauge style; drafts kept).
 - Repo: https://github.com/0kam/ShutterClock (public). GitHub Pages on `docs/`
   enabled 2026-10-11 → https://0kam.github.io/ShutterClock/app/ (`?demo=1` demo).

@@ -42,7 +42,7 @@ uvx --from adafruit-nrfutil --with pyserial adafruit-nrfutil dfu serial --packag
 
 `firmware/release/` is git-ignored; publish packages as GitHub Releases.
 
-## First bench session (to do)
+## First bench session (done 2026-10-20 on board #1, see `docs/measurements/2026-10-20_bench_board1.md`)
 
 1. `cam status`, `batt` (compare with a DMM, set the trim), `cur` with the camera off (expect ~0 mA)
 2. `cam on` → the camera boots; `cur 50 100` → idle ~220–300 mA; `release` → shutter fires; `cur` peak > 1 A
