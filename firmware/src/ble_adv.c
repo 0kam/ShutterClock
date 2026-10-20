@@ -168,9 +168,8 @@ int ble_adv_init(void)
 	}
 
 	(void)hwinfo_get_device_id(id, sizeof(id));
-	/* SG-<sensor>-XXXX: SG-TFM = TFmini Plus build, SG-TSD = TSD20 build (11 chars, max 16). */
-	snprintf(name, sizeof(name), "SG-%s-%02X%02X",
-		 IS_ENABLED(CONFIG_SHUTTERCLOCK_SENSOR_TSD20) ? "TSD" : "TFM", id[6], id[7]);
+	/* SC-XXXX: last two bytes of the device ID (7 chars, max 16). The app filters on "SC-". */
+	snprintf(name, sizeof(name), "SC-%02X%02X", id[6], id[7]);
 	ret = bt_set_name(name);
 	if (ret) {
 		LOG_WRN("bt_set_name: %d", ret);

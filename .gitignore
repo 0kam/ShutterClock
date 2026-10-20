@@ -22,3 +22,6 @@ __pycache__/
 pcb/*.kicad_prl
 pcb/*-backups/
 pcb/fp-info-cache
+
+# Flash packages (published as GitHub Releases)
+firmware/release/

@@ -5,7 +5,7 @@ ShutterClock PCB v1.0. Based on the SnowGauge firmware (`PROVENANCE.md`).
 
 - SDK: **nRF Connect SDK v3.4.0** (`nrfutil sdk-manager`), board target `xiao_ble/nrf52840`
 - Pin map source of truth: [`pcb/README.md`](../pcb/README.md)
-- Status: **builds (2026-10-11, FLASH 58 %), not yet run on hardware** (boards and parts in transit)
+- Status: **runs on the first assembled board (2026-10-20)**: USB shell, BLE `SC-XXXX`, settings, storage OK. Camera sequence not yet exercised.
 
 | Module | File | Purpose |
 |---|---|---|
@@ -31,7 +31,16 @@ Add `-p` for a pristine build. Output: `firmware/build/firmware/zephyr/zephyr.uf
 
 ## Flash
 
-Same as SnowGauge (`docs/03_firmware.md` there): UF2 drag-and-drop, or on macOS 26 serial DFU with `adafruit-nrfutil` and a package built with `--sd-req 0xFFFE`. **Remove JP1 before connecting USB** when the board is on battery power.
+Same as SnowGauge (`docs/03_firmware.md` there): UF2 drag-and-drop, or on macOS 26 serial DFU. **Remove JP1 before connecting USB** when the board is on battery power.
+
+```bash
+# package (once per build; --sd-req 0xFFFE is required by the Adafruit bootloader)
+uvx --from adafruit-nrfutil adafruit-nrfutil dfu genpkg --dev-type 0x0052 --sd-req 0xFFFE --application firmware/build/firmware/zephyr/zephyr.hex firmware/release/shutterclock_fw_<date>_dfu.zip
+# enter the bootloader: double-tap RESET, or type `dfu` in the USB shell; then
+uvx --from adafruit-nrfutil --with pyserial adafruit-nrfutil dfu serial --package firmware/release/shutterclock_fw_<date>_dfu.zip -p /dev/cu.usbmodemXXXXX -b 115200 --singlebank
+```
+
+`firmware/release/` is git-ignored; publish packages as GitHub Releases.
 
 ## First bench session (to do)
 
