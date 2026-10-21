@@ -85,7 +85,7 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   camera settings / 4 one camera-power toggle (60 min auto-off, off on disconnect,
   also enforced by the firmware), test shot with result line, ERASE; status streamed
   while connected. Verified on the phone with board #1 (2026-10-21).
-- Spec v0.15 lists the open items U1–U29 (§3), the test-shot preview options
+- Spec v0.16 lists the open items U1–U29 (§3), the test-shot preview options
   (§4) and a **draft circuit/BOM (§6, not yet approved as a whole)**.
   Decided: U27 3.5 mm stereo jack + off-the-shelf cables; U14 NJW4181U3-33B
   (Akizuki 113996, SOT-89, 35 V/40 V abs, Iq 9 µA) directly on the PCB.
@@ -93,6 +93,8 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   no overseas mail order.** ShutterClock is assembled by the user, not by
   students, so **SMD parts are fine here** (the through-hole rule is
   SnowGauge's). Camera accessories from domestic shops (Amazon.co.jp etc.).
+- **PCB v1.1 designed 2026-10-21 (errata fixed, DRC clean, gerbers in `pcb/`, not ordered;
+  4 v1.0 boards remain and are usable with the workarounds).**
 - **PCB v1.0 ordered 2026-10-08 at JLCPCB** (order W2026100808086019, PCB
   Y14-13437881A, 5 pcs, $13.75 incl. UPS Express Saver, ETA ~2026-10-13 to the
   user's home address). Chrome extension (Claude in Chrome) works for JLCPCB

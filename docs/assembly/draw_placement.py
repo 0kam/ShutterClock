@@ -7,6 +7,7 @@ from matplotlib.patches import Rectangle, Circle
 
 d = json.load(open(sys.argv[1]))
 OUT = sys.argv[2]
+VER = sys.argv[3] if len(sys.argv) > 3 else "v1.0"
 fps = {f["ref"]: f for f in d["fps"]}
 
 STEP = {  # soldering step -> (colour, refs)
@@ -97,7 +98,7 @@ for ref in fps:
     elif ref == "U1":
         txt(f["cb"][2] + 0.6, (f["cb"][1] + f["cb"][3]) / 2, "U1 NJW4181\n(SOT-89)", 6.5, weight="bold", ha="left")
     elif ref == "U2":
-        txt(f["x"], f["y"], "U2  MBC2596-01 module (on 4 single pins)\nset to 9.4 V before fitting, remove the red LED\nIN side left, OUT side right", 9, weight="bold")
+        txt(f["x"], f["y"], "U2  MBC2596-01 module" + (" (v1.0 holes do not fit: use bent tinned wire)" if VER == "v1.0" else " (on 4 single pins)") + "\nset to 9.4 V before fitting, remove the red LED\nIN side left, OUT side right", 9, weight="bold")
     elif ref == "A1":
         txt(f["x"], f["y"] + 1, "A1  XIAO nRF52840\n(2 x 1x7 sockets)\nUSB connector to the\ntop edge", 8, weight="bold")
     elif ref in ("J1", "J2"):
@@ -126,9 +127,12 @@ for ref in ("Q1", "Q2", "Q5", "Q3", "Q6", "Q7"):
         x, y = pad(ref, num); txt(x, y + 1.9, name, 6, "#4a148c", "bold")
 # electrolytics: + on the pad that carries the positive net (NOT the silk for C1)
 x, y = pad("C3", "1"); txt(x, y - 2.0, "+", 11, "#b71c1c", "bold")
-x, y = pad("C1", "2"); txt(x, y - 2.0, "+", 11, "#b71c1c", "bold", bg="white")
-x, y = pad("C1", "1"); txt(x, y - 2.0, "-", 11, "#b71c1c", "bold", bg="white")
-txt(16.5, 61.8, "C1: + is the RIGHT pad\n(silk + is wrong on v1.0)", 6.3, "#b71c1c", "bold", bg="#fff3e0")
+if VER == "v1.0":
+    x, y = pad("C1", "2"); txt(x, y - 2.0, "+", 11, "#b71c1c", "bold", bg="white")
+    x, y = pad("C1", "1"); txt(x, y - 2.0, "-", 11, "#b71c1c", "bold", bg="white")
+    txt(16.5, 61.8, "C1: + is the RIGHT pad\n(silk + is wrong on v1.0)", 6.3, "#b71c1c", "bold", bg="#fff3e0")
+else:
+    x, y = pad("C1", "1"); txt(x, y - 2.0, "+", 11, "#b71c1c", "bold")
 # DIP pin 1
 for ref in ("U3", "U4"):
     x, y = pad(ref, "1"); ax.add_patch(Circle((x - 1.5, y - 1.5), 0.45, fc="#b71c1c", ec="none", zorder=7))
@@ -165,13 +169,13 @@ txt(20, 2.6, "USB", 7, "#333", "bold")
 
 # --- legend ---
 ly = H + 2.5
-txt(0, ly, "ShutterClock PCB v1.0 - top view, soldering order (low -> high)", 10, weight="bold", ha="left")
+txt(0, ly, f"ShutterClock PCB {VER} - top view, soldering order (low -> high)", 10, weight="bold", ha="left")
 for s, (col, refs) in STEP.items():
     yy = ly + 2.2 + (s - 1) * 1.25
     ax.add_patch(Rectangle((0.5, yy - 0.45), 2.2, 0.9, fc=col, ec="black", lw=0.3, alpha=0.7))
     txt(3.5, yy, f"{s}. {STEP_NAME[s]}", 7.5, ha="left")
 txt(55, ly + 2.2, "Square pad = pin 1 / cathode (K) / positive (+).  MOSFETs: metal tab toward the TOP edge, printed face toward the bottom edge, pins G-D-S.", 7, ha="left")
-txt(55, ly + 3.45, "K = cathode band.  Electrolytics: + on the pad marked + here (C1: the right pad, silk is wrong).", 7, ha="left")
+txt(55, ly + 3.45, "K = cathode band.  Electrolytics: + on the pad marked + here" + (" (C1: the right pad, silk is wrong)." if VER == "v1.0" else "."), 7, ha="left")
 txt(55, ly + 4.7, "PC817: dot / pin 1 at the top-left corner.  U1: three leads to the left, tab on the wide pad.", 7, ha="left")
 txt(55, ly + 5.95, "JP1: fitted normally, REMOVE BEFORE USB.  JP2: fitted = camera always on.", 7, ha="left")
 txt(55, ly + 7.2, "J3: T = tip (SHUTTER), R = ring (AF), S = sleeve (common).", 7, ha="left")

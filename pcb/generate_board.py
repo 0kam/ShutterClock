@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the ShutterClock board (KiCad 10, pcbnew API). Spec v0.11 §6.
+"""Generate the ShutterClock board v1.1 (KiCad 10, pcbnew API). Spec v0.11 §6, errata of v1.0 fixed.
 
 Run with KiCad's bundled python:
   /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 generate_board.py
@@ -96,21 +96,22 @@ def fp_jack():
 
 
 def fp_fuseclips():
-    # Two FUC-03A clips (2 legs each, 6.7 mm apart across the fuse axis,
-    # holes 1.7 mm) 18 mm apart for a 5.2x20 mm glass fuse along x.
+    # Two FUC-03A clips 18 mm apart for a 5.2x20 mm glass fuse along x. Each
+    # clip has 2 legs 7.0 mm apart ALONG the fuse axis (measured 2026-10-21;
+    # v1.0 wrongly had them across the axis), holes 1.7 mm.
     return custom("FUC-03A_x2_5x20", [
-        ("1", -9.0, -3.35, 1.8, 2.8), ("1", -9.0, 3.35, 1.8, 2.8),
-        ("2", 9.0, -3.35, 1.8, 2.8), ("2", 9.0, 3.35, 1.8, 2.8),
-    ], outline=(-12.0, -3.6, 12.0, 3.6))
+        ("1", -12.5, 0.0, 1.8, 2.8), ("1", -5.5, 0.0, 1.8, 2.8),
+        ("2", 5.5, 0.0, 1.8, 2.8), ("2", 12.5, 0.0, 1.8, 2.8),
+    ], outline=(-14.0, -3.6, 14.0, 3.6))
 
 
 def fp_buck():
-    # Akizuki MBC2596-01 (43 x 21 mm). Corner terminals IN+/IN-/OUT+/OUT-.
-    # TODO: measure the real hole positions on the module before ordering;
-    # placeholder = 19.0 / 8.0 mm from the centre.
+    # Akizuki MBC2596-01 (43 x 21 mm). Corner terminals IN+/IN-/OUT+/OUT-,
+    # hole pattern 40.0 x 17.5 mm (measured on the module 2026-10-19; v1.0
+    # had a 38 x 16 placeholder).
     return custom("MBC2596-01", [
-        ("INP", -19.0, -8.0, 1.2, 2.2), ("INN", -19.0, 8.0, 1.2, 2.2),
-        ("OUTP", 19.0, -8.0, 1.2, 2.2), ("OUTN", 19.0, 8.0, 1.2, 2.2),
+        ("INP", -20.0, -8.75, 1.2, 2.2), ("INN", -20.0, 8.75, 1.2, 2.2),
+        ("OUTP", 20.0, -8.75, 1.2, 2.2), ("OUTN", 20.0, 8.75, 1.2, 2.2),
     ], outline=(-21.5, -10.5, 21.5, 10.5))
 
 
@@ -166,11 +167,11 @@ PARTS = {
     "F1": (fp_fuseclips, "5A", (6, 52), 90, {"1": "BAT_RAW", "2": "F_OUT"}),
     "Q1": (TO220, "2SJ334 REV", (14, 40), 0, {"1": "Q1_G", "2": "F_OUT", "3": "VIN"}),
     "R15": (R, "1M", (13, 48), 0, {"1": "Q1_G", "2": "GND"}),
-    "ZD1": (DO35, "15V", (3, 66), 0, {"1": "VIN", "2": "Q1_G"}),
+    "ZD1": (DO35, "15V", (3, 69.5), 0, {"1": "VIN", "2": "Q1_G"}),
     "D1": (DO41, "P4KE15A", (24, 34.84), 270, {"1": "VIN", "2": "TVS_MID"}),
     "D2": (DO41, "P4KE15A", (24, 47.84), 270, {"1": "TVS_MID", "2": "GND"}),
     "C1": (("Capacitor_THT", "CP_Radial_D10.0mm_P5.00mm"), "100u/50V", (14, 55), 0,
-           {"1": "GND", "2": "VIN"}),
+           {"1": "VIN", "2": "GND"}),  # pad 1 = "+" on the KiCad footprint (v1.0 had it on GND)
     # --- camera switch Q2 (TO-220) driven by Q3 ---
     "Q2": (TO220, "2SJ334 CAM", (36, 34), 0, {"1": "Q2_G", "2": "BUCK_IN", "3": "VIN"}),
     "R12": (R, "100k", (36, 38), 0, {"1": "VIN", "2": "Q2_G"}),
@@ -321,7 +322,7 @@ def silk(text, x, y, size=1.2, bold=False):
     board.Add(t)
 
 
-silk("ShutterClock v1.0", 30, 86, 1.6, True)
+silk("ShutterClock v1.1", 30, 86, 1.6, True)
 silk("BAT 12V +  -", 13.5, 73.5, 1.0, True)
 silk("CAM +  -", 84.5, 73.5, 1.0, True)
 silk("REMOVE JP1 BEFORE USB", 46, 2.5, 0.8, True)

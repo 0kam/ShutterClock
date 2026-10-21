@@ -1,4 +1,4 @@
-# Tracks for ShutterClock v1.0 (exec'd by generate_board.py; P = pad_xy).
+# Tracks for ShutterClock v1.1 (exec'd by generate_board.py; P = pad_xy).
 B = pcbnew.B_Cu
 PW = POWER_W
 
@@ -9,24 +9,24 @@ track("BTN", [P("SW1", "1", 0), P("SW1", "1", 1)])
 track("JACK_TIP", [P("J3", "2", 0), P("J3", "2", 1)])
 
 # ---- battery input: J1 -> fuse -> Q1 -> VIN ----
-track("BAT_RAW", [P("J1", "1"), (11, 78), (6, 78), (6, 61)], width=PW)
-track("F_OUT", [(9.35, 43), (16.54, 43), P("Q1", "2")], layer=B, width=PW)
-track("Q1_G", [P("Q1", "1"), (11.5, 40), (11.5, 65), P("ZD1", "2")])
+track("BAT_RAW", [P("J1", "1"), (11, 78), (6, 78), P("F1", "1", 0)], width=PW)
+track("F_OUT", [P("F1", "2", 1), (6, 43), (16.54, 43), P("Q1", "2")], layer=B, width=PW)
+track("Q1_G", [P("Q1", "1"), (11.5, 40), (11.5, 68.5), P("ZD1", "2")])
 track("Q1_G", [(11.5, 48), P("R15", "1")])
 # VIN trunk on B.Cu (x = 27) with branches
-track("VIN", [(27, 27), (27, 70)], layer=B, width=PW)
+track("VIN", [(27, 27), (27, 72)], layer=B, width=PW)
 track("VIN", [P("R1", "2"), (27, 27)], layer=B, width=PW)
 track("VIN", [(27, 28), (41.08, 28), P("Q2", "3")], layer=B, width=PW)
 track("VIN", [(27, 34.84), P("D1", "1")], layer=B, width=PW)
 track("VIN", [(27, 39.7), (35, 39.7), (36, 38.9), P("R12", "1")], layer=B, width=1.0)
 track("VIN", [(27, 40), P("Q1", "3")], layer=B, width=PW)
 track("VIN", [(27, 45), P("ZD2", "1")], layer=B, width=PW)
-track("VIN", [(27, 55), P("C1", "2")], layer=B, width=PW)
+track("VIN", [(27, 52.5), (14, 52.5), P("C1", "1")], layer=B, width=PW)
 track("VIN", [(27, 60.2), (42, 60.2)], layer=B, width=1.2)
 track("VIN", [(41.08, 60.2), P("Q5", "3")], layer=B, width=1.2)
 track("VIN", [(39.62, 60.2), P("R13", "2")], layer=B, width=1.2)
 track("VIN", [(42, 60.2), P("ZD3", "1")], layer=B, width=1.2)
-track("VIN", [P("ZD1", "1"), (3, 70), (27, 70)], layer=B, width=PW)
+track("VIN", [P("ZD1", "1"), (3, 72), (27, 72)], layer=B, width=PW)
 track("VIN", [P("Q2", "3"), (41.08, 30), (41.5, 30), (41.5, 26.5), (52, 26.5), P("R4", "1")], width=PW)
 track("TVS_MID", [P("D1", "2"), P("D2", "1")])
 # ---- 3.3 V ----
@@ -56,7 +56,7 @@ track("A1_NODE", [(44, 24.8), (44, 21.2)])
 via("A1_NODE", (44, 21.2))
 track("A1_NODE", [(44, 21.2), (44, 3.3), (14, 3.3), (14, 8.92), P("A1", "2")], layer=B)
 # ---- camera switch ----
-track("BUCK_IN", [P("Q2", "2"), (38.54, 36), (48, 36), (48, 30), P("U2", "INP")], width=PW)
+track("BUCK_IN", [P("Q2", "2"), (38.54, 36), (48, 36), (48, 29.25), P("U2", "INP")], width=PW)
 track("Q2_G", [P("Q2", "1"), (36, 35.3), (33, 35.3), P("ZD2", "2")])
 track("Q2_G", [P("ZD2", "2"), (33, 40), (36, 40), P("R16", "1")])
 track("Q2_G", [P("R12", "2"), (43.62, 40), (36, 40)])
@@ -65,7 +65,7 @@ track("Q2_DRV", [P("Q3", "2"), (48.29, 47), (46, 47), P("JP2", "1")])
 track("Q3_G", [P("Q3", "1"), (46, 45.5), (43.62, 45.5), P("R8", "2")])
 track("Q3_G", [P("R8", "2"), P("R10", "2")])
 # ---- buck output ----
-track("BUCK_OUT", [P("U2", "OUTP"), (97, 30), (97, 50), (73, 50), (71.24, 52), P("D4", "2")], width=PW)
+track("BUCK_OUT", [P("U2", "OUTP"), (97, 29.25), (97, 50), (73, 50), (71.24, 52), P("D4", "2")], width=PW)
 track("CAM_P", [P("D4", "1"), (57, 54), (57, 64), (58.58, 64), P("Q7", "3")], layer=B, width=PW)
 track("CAM_P", [(58.58, 64), P("C3", "1"), (78, 74), (82, 74), P("J2", "1")], layer=B, width=PW)
 track("CAM_P", [(78, 72.38), P("R17", "2")], layer=B)
