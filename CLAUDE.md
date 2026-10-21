@@ -102,9 +102,11 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - **PCB v1.1 designed 2026-10-21 (errata fixed, DRC clean, gerbers in `pcb/`, not ordered;
   4 v1.0 boards remain and are usable with the workarounds).**
 - **Firmware work is delegated to an Opus subagent since 2026-10-21 (user request)**; the main
-  session reviews, flashes (serial DFU) and bench-tests. Known regression in fw 2026-10-21b: BLE
-  connect hangs because `diag_boots_clear()` writes settings from the BT connected callback —
-  fix pending (defer to a work item).
+  session reviews, flashes (serial DFU) and bench-tests. Lesson 2026-10-21 (fw 2026-10-21b):
+  a settings/flash write from the BT connected callback crashed the board (cpu-exception) on
+  every app connection; fixed in 2026-10-21c by deferring to the system work queue. **Never do
+  flash I/O or long work in BT/GATT callbacks.** Board #1 runs 2026-10-21c (RX8900 driver
+  included, module absent on v1.0).
 - **PCB v1.0 ordered 2026-10-08 at JLCPCB** (order W2026100808086019, PCB
   Y14-13437881A, 5 pcs, $13.75 incl. UPS Express Saver, ETA ~2026-10-13 to the
   user's home address). Chrome extension (Claude in Chrome) works for JLCPCB
