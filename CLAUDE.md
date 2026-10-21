@@ -81,11 +81,11 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
   config `sc/sched/*` + `sc/cam/*`, `shot_gatt.c` (UUID 53430001-…), shell
   (`cam`, `ka`, `af`, `shutter`, `release`, `cur`, `shoot`, `cfg set`). Reused
   modules listed in PROVENANCE.md. Bench plan in `firmware/README.md`.
-- **App v2026-10-11a in `docs/app/`**: SnowGauge page with ShutterClock
-  schemas (record, settings pickers incl. advanced camera timing), shot GATT
-  panel (live, camera hold, test shot, AF only, ERASE). Verified only in demo
-  mode in the browser.
-- Spec v0.14 lists the open items U1–U29 (§3), the test-shot preview options
+- **App v2026-10-20a in `docs/app/`**: panels 1 sync / 2 shot log / 3 schedule +
+  camera settings / 4 one camera-power toggle (60 min auto-off, off on disconnect,
+  also enforced by the firmware), test shot with result line, ERASE; status streamed
+  while connected. Verified on the phone with board #1 (2026-10-21).
+- Spec v0.15 lists the open items U1–U29 (§3), the test-shot preview options
   (§4) and a **draft circuit/BOM (§6, not yet approved as a whole)**.
   Decided: U27 3.5 mm stereo jack + off-the-shelf cables; U14 NJW4181U3-33B
   (Akizuki 113996, SOT-89, 35 V/40 V abs, Iq 9 µA) directly on the PCB.
