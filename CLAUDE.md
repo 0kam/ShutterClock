@@ -76,7 +76,9 @@ camera from a 12 V solar-charged battery. Sister project of SnowGauge.
 - **Firmware v0 (2026-10-11): SnowGauge port in `firmware/`, builds with NCS
   v3.4.0 for `xiao_ble/nrf52840` (FLASH 58 %). First run on hardware 2026-10-20
   (flashed by serial DFU from this machine, `uvx --from adafruit-nrfutil`; BLE name
-  fixed to `SC-XXXX`, the XIAO had SnowGauge NVS data → clock checkpoint from Sept).** New:
+  fixed to `SC-XXXX`, the XIAO had SnowGauge NVS data → clock checkpoint from Sept).
+  2026-10-21: the reset hold-off is gone (user decision: the scheduler waits for the next
+  slot anyway); the 12-consecutive-resets halt stays and a BLE connection clears the counter.** New:
   `camera.c` (shoot sequence, keep-alive, hold, button), record v1 "SC",
   config `sc/sched/*` + `sc/cam/*`, `shot_gatt.c` (UUID 53430001-…), shell
   (`cam`, `ka`, `af`, `shutter`, `release`, `cur`, `shoot`, `cfg set`). Reused

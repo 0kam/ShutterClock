@@ -62,7 +62,7 @@ void diag_init(void);
 
 /*
  * Load + increment the consecutive-reset counter (settings must be
- * initialised, i.e. after config_init()). Computes hold-off / halted.
+ * initialised, i.e. after config_init()). Computes halted (reset-loop protection).
  */
 int diag_count_boot(void);
 
@@ -71,8 +71,11 @@ const struct diag_boot *diag_boot_info(void);
 /* Scheduled measurements are suspended for this boot (reset loop protection). */
 bool diag_measure_halted(void);
 
-/* Uptime (ms) before which the scheduler must not measure. */
+/* Uptime (ms) before which the scheduler must not shoot (always 0 since 2026-10-21; kept for the GATT field). */
 int64_t diag_holdoff_until_ms(void);
+
+/* Clear the consecutive-reset counter and the halt (called on BLE connect: a person is there). */
+void diag_boots_clear(void);
 
 /* Append the boot line to /lfs1/boot.log (after storage_init + clock restore). */
 int diag_log_boot(void);

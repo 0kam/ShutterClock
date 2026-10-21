@@ -92,7 +92,7 @@ void diag_init(void)
 			 info.reset == DIAG_RESET_FATAL);
 	/* Until the counter is loaded: behave like a first boot after a clean start. */
 	info.boot_count = 1;
-	holdoff_until_ms = (int64_t)CONFIG_SHUTTERCLOCK_BOOT_HOLDOFF_MIN * 60 * 1000;
+	holdoff_until_ms = 0; /* v2026-10-21: no scheduler hold-off after a reset (user decision) */
 
 	LOG_INF("reset cause: %s (0x%x)%s%s", diag_reset_str(info.reset), cause,
 		info.fatal ? " fatal=" : "", info.fatal ? diag_fatal_str(info.fatal) : "");
@@ -107,8 +107,7 @@ int diag_count_boot(void)
 	}
 	info.boot_count = MIN((uint32_t)stored_boots + 1, 255);
 	info.halted = info.boot_count >= CONFIG_SHUTTERCLOCK_BOOT_MAX_RESETS;
-	holdoff_until_ms = (int64_t)CONFIG_SHUTTERCLOCK_BOOT_HOLDOFF_MIN * 60 * 1000 *
-			   MIN(info.boot_count, 12);
+	holdoff_until_ms = 0;
 	ret = save_boots(info.boot_count);
 	k_work_schedule(&boot_counter_work, K_MINUTES(CONFIG_SHUTTERCLOCK_BOOT_HOLDOFF_MIN));
 
@@ -117,10 +116,21 @@ int diag_count_boot(void)
 		LOG_ERR("%u consecutive resets - scheduled measurements HALTED until the next reboot",
 			info.boot_count);
 	} else if (info.boot_count > 1) {
-		LOG_WRN("boot #%u within the hold-off window - first measurement in %lld min",
-			info.boot_count, holdoff_until_ms / 60000);
+		LOG_WRN("boot #%u within the reset-count window", info.boot_count);
 	}
 	return ret;
+}
+
+void diag_boots_clear(void)
+{
+	/* Someone connected over BLE: a person is present, so this is not a reset loop. */
+	if (info.boot_count > 1 || info.halted) {
+		LOG_INF("BLE connection - reset counter cleared (was %u%s)", info.boot_count,
+			info.halted ? ", halted" : "");
+	}
+	info.boot_count = 1;
+	info.halted = false;
+	(void)save_boots(0);
 }
 
 const struct diag_boot *diag_boot_info(void)

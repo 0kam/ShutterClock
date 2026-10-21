@@ -230,15 +230,6 @@ int main(void)
 				first = true;
 				continue;
 			}
-			/* Hold-off after a reset (see diag_init). */
-			int64_t left_ms = diag_holdoff_until_ms() - k_uptime_get();
-
-			if (left_ms > 0) {
-				if (k_sem_take(&period_changed, K_MSEC(MIN(left_ms, 3600000))) == 0) {
-					first = true;
-				}
-				continue;
-			}
 			if (time_now(&now) != 0) {
 				/*
 				 * Clock never set (sync forgotten at installation): still

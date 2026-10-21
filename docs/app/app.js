@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const APP_VERSION = '2026-10-21a';
+const APP_VERSION = '2026-10-21b';
 
 /* ---------- project schemas ---------- */
 
@@ -419,14 +419,14 @@ function updateCamUi(st, hold, vbat, ma) {
   if (ma !== undefined) $('live-ma').textContent = ma;
   updateCamButton();
 }
-/* Next scheduled shot and the reset hold-off (firmware waits 10 min x consecutive resets before the first scheduled shot). */
+/* Next scheduled shot; hold-off only exists in firmware before 2026-10-21b, HALTED = reset-loop protection. */
 function updateNextShot(st, holdoffMin, nextEpoch) {
   const el = $('next-shot');
-  if (st & 16) { el.className = 'status err'; el.textContent = '予定撮影は停止中: 短時間に再起動を繰り返したため。電源を入れ直すと再開します'; return; }
+  if (st & 16) { el.className = 'status err'; el.textContent = '予定撮影は停止中: 短時間に再起動を繰り返したため（電池切れの疑い）。この接続で解除されます'; return; }
   const tz = state.site && state.site.tz_min != null ? state.site.tz_min : 540;
   const next = nextEpoch ? new Date((nextEpoch + tz * 60) * 1000).toISOString().slice(5, 16).replace('T', ' ') : null;
   let text = next ? `次の予定撮影: ${next}` : '次の予定撮影: なし（スケジュール OFF か時刻未設定）';
-  if (holdoffMin > 0) { el.className = 'status warn'; text += `。再起動後の保留中: あと ${holdoffMin} 分は予定撮影をしません（電源投入・書き込み・XIAO 抜き差しのたびに 10 分 × 連続回数）`; }
+  if (holdoffMin > 0) { el.className = 'status warn'; text += `。再起動後の保留中: あと ${holdoffMin} 分（古いファームウェア）`; }
   else el.className = 'status';
   el.textContent = text;
 }

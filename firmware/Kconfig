@@ -29,18 +29,21 @@ config SHUTTERCLOCK_BLE_ADV_INT_MAX_MS
 	range 20 10240
 
 config SHUTTERCLOCK_BOOT_HOLDOFF_MIN
-	int "Delay of the first scheduled shot after a reset (min)"
+	int "Window for counting consecutive resets (min)"
 	default 10
 	help
-	  A reset restores the clock from the last record, which would make the
-	  scheduler fire immediately (and again after every brown-out reset).
-	  The first scheduled shot is held off by this many minutes, multiplied
-	  by the number of resets within the last hold-off window.
+	  Resets that happen within this many minutes of the previous boot are
+	  counted as consecutive. There is no scheduler hold-off any more (the
+	  scheduler waits for the next slot anyway); the counter only drives the
+	  reset-loop halt below, and a BLE connection clears it.
 
 config SHUTTERCLOCK_BOOT_MAX_RESETS
 	int "Consecutive resets after which scheduled shots are halted"
 	default 12
 	range 2 15
+	help
+	  Reset-loop protection (weak battery browning out on every shot). Cleared
+	  by a BLE connection or by running for the window above without a reset.
 
 config SHUTTERCLOCK_WDT_TIMEOUT_S
 	int "Hardware watchdog timeout (s)"

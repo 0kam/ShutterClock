@@ -120,6 +120,9 @@ static void on_connected(struct bt_conn *conn, uint8_t err)
 	ARG_UNUSED(conn);
 	connected = (err == 0);
 	LOG_INF("BLE connected (err %u)", err);
+	if (err == 0) {
+		diag_boots_clear();
+	}
 }
 
 /*
