@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate the ShutterClock board v1.1 (KiCad 10, pcbnew API). Spec v0.11 §6, errata of v1.0 fixed.
+"""Generate the ShutterClock board v1.2 (KiCad 10, pcbnew API). Spec v0.11 §6, v1.0 errata fixed,
+RX8900 RTC module + CR2032 holder added on a 12 mm strip at the bottom (board 100 x 100 mm).
 
 Run with KiCad's bundled python:
   /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 generate_board.py
@@ -35,6 +36,7 @@ NET_NAMES = [
     "KA_EN", "Q6_G", "Q5_DRV", "Q5_G", "KA_SW", "Q7_D", "Q7_G", "ZD_MID",
     "AF_DRV", "AF_LED_A", "AF_C", "SHUT_DRV", "SHUT_LED_A", "SHUT_C",
     "JACK_TIP", "JACK_RING", "JACK_SLEEVE", "BTN",
+    "SDA", "SCL", "VBAT_RTC", "BT_P",
 ]
 nets = {}
 for n in NET_NAMES:
@@ -115,6 +117,30 @@ def fp_buck():
     ], outline=(-21.5, -10.5, 21.5, 10.5))
 
 
+def fp_rx8900():
+    # Akizuki AE-RX8900 (RX8900CE DIP module, 15 x 10 mm, DIP-8 300 mil), laid
+    # with the pin rows along x. Pins 5-8 (SDA SCL VBAT VDD) on the top row
+    # left to right, pins 4-1 (GND /INT FOUT FOE) on the bottom row left to
+    # right (= the module rotated 180 deg from its own pin-1-top-left view).
+    pads = []
+    for i, num in enumerate(("5", "6", "7", "8")):
+        pads.append((num, -3.81 + i * 2.54, -3.81, 1.0, 1.7))
+    for i, num in enumerate(("4", "3", "2", "1")):
+        pads.append((num, -3.81 + i * 2.54, 3.81, 1.0, 1.7))
+    return custom("AE-RX8900", pads, outline=(-7.5, -5.0, 7.5, 5.0))
+
+
+def fp_cr2032_vertical():
+    # Akizuki CH243-2032LF vertical CR2032 holder (drawing CH243-0308): body
+    # 23.8 x 6.45 mm, three 1.0 mm pins: one centre pin 1.42 mm toward the
+    # back, two outer pins 10.0 mm apart 1.93 mm toward the front.
+    # Pad "1" = centre pin (assumed +, verify on the part), "2" = outer pins.
+    return custom("CH243-2032LF", [
+        ("1", 0.0, -1.42, 1.1, 2.0),
+        ("2", -5.0, 1.93, 1.1, 2.0), ("2", 5.0, 1.93, 1.1, 2.0),
+    ], outline=(-11.9, -3.225, 11.9, 3.225))
+
+
 R = ("Resistor_THT", "R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal")
 R1W = ("Resistor_THT", "R_Axial_DIN0411_L9.9mm_D3.6mm_P12.70mm_Horizontal")
 R3W = ("Resistor_THT", "R_Axial_DIN0617_L17.0mm_D6.0mm_P20.32mm_Horizontal")
@@ -135,12 +161,12 @@ HOLE = ("MountingHole", "MountingHole_3.2mm_M3")
 PARTS = {
     # --- MCU: left column A0/A1 analog, right column digital outputs ---
     "A1": ("XIAO", "XIAO nRF52840", (20, 14), 90,
-           {"1": "ADC_NODE", "2": "A1_NODE", "3": "AF_DRV",
+           {"1": "ADC_NODE", "2": "A1_NODE", "3": "AF_DRV", "5": "SDA", "6": "SCL",
             "8": "CAM_EN", "9": "SHUT_DRV", "10": "BTN", "11": "KA_EN",
             "12": "3V3_SYS", "13": "GND"}),
     "C6": (CDISC, "0.1u", (33, 12.5), 0, {"1": "3V3_SYS", "2": "GND"}),
     "JP1": (HDR2, "JP1 3V3", (38, 6), 0, {"1": "3V3_LDO", "2": "3V3_SYS"}),
-    "SW1": (("Button_Switch_THT", "SW_PUSH_6mm"), "TEST", (2, 28), 0, {"1": "BTN", "2": "GND"}),
+    "SW1": (("Button_Switch_THT", "SW_PUSH_6mm"), "TEST", (4, 28), 0, {"1": "BTN", "2": "GND"}),
     # --- 3.3 V rail ---
     "U1": (("Package_TO_SOT_SMD", "SOT-89-3"), "NJW4181U3-33B", (44, 16), 0,
            {"1": "3V3_LDO", "2": "GND", "3": "LDO_IN"}),
@@ -167,7 +193,7 @@ PARTS = {
     "F1": (fp_fuseclips, "5A", (6, 52), 90, {"1": "BAT_RAW", "2": "F_OUT"}),
     "Q1": (TO220, "2SJ334 REV", (14, 40), 0, {"1": "Q1_G", "2": "F_OUT", "3": "VIN"}),
     "R15": (R, "1M", (13, 48), 0, {"1": "Q1_G", "2": "GND"}),
-    "ZD1": (DO35, "15V", (3, 69.5), 0, {"1": "VIN", "2": "Q1_G"}),
+    "ZD1": (DO35, "15V", (4, 69.5), 0, {"1": "VIN", "2": "Q1_G"}),
     "D1": (DO41, "P4KE15A", (24, 34.84), 270, {"1": "VIN", "2": "TVS_MID"}),
     "D2": (DO41, "P4KE15A", (24, 47.84), 270, {"1": "TVS_MID", "2": "GND"}),
     "C1": (("Capacitor_THT", "CP_Radial_D10.0mm_P5.00mm"), "100u/50V", (14, 55), 0,
@@ -205,11 +231,17 @@ PARTS = {
     "R5": (R, "47k", (45.5, 69.5), 0, {"1": "KA_SW", "2": "Q7_G"}),
     "ZD4": (DO35, "9.1V", (62, 70), 0, {"1": "Q7_G", "2": "ZD_MID"}),
     "D6": (DO35, "1N4148", (62, 74), 0, {"1": "GND", "2": "ZD_MID"}),
+    # --- RTC (v1.2): RX8900 module on the XIAO I2C (D4 SDA / D5 SCL), CR2032 backup ---
+    "U5": (fp_rx8900, "AE-RX8900", (27, 94.5), 0,
+           {"5": "SDA", "6": "SCL", "7": "VBAT_RTC", "8": "3V3_SYS", "4": "GND", "1": "GND"}),
+    # CR2032 is a primary cell: D7 blocks the RX8900's internal VDD -> VBAT charge path.
+    "BT1": (fp_cr2032_vertical, "CR2032", (58, 95), 0, {"1": "BT_P", "2": "GND"}),
+    "D7": (DO35, "1N4148", (36.2, 93.58), 0, {"1": "VBAT_RTC", "2": "BT_P"}),
     # --- mounting ---
     "H1": (HOLE, "M3", (3.5, 3.5), 0, {}),
     "H2": (HOLE, "M3", (96.5, 3.5), 0, {}),
-    "H3": (HOLE, "M3", (3.5, 84.5), 0, {}),
-    "H4": (HOLE, "M3", (96.5, 84.5), 0, {}),
+    "H3": (HOLE, "M3", (3.5, 96.5), 0, {}),
+    "H4": (HOLE, "M3", (96.5, 96.5), 0, {}),
 }
 
 fps = {}
@@ -285,7 +317,7 @@ if not PLACE_ONLY:
     exec(open(os.path.join(HERE, "tracks.py")).read())
 
 # ---------------- board outline ----------------
-X0, Y0, X1, Y1 = 0, 0, 100, 88
+X0, Y0, X1, Y1 = 0, 0, 100, 100
 for a, b in [((X0, Y0), (X1, Y0)), ((X1, Y0), (X1, Y1)),
              ((X1, Y1), (X0, Y1)), ((X0, Y1), (X0, Y0))]:
     seg = pcbnew.PCB_SHAPE(board, pcbnew.SHAPE_T_SEGMENT)
@@ -322,7 +354,9 @@ def silk(text, x, y, size=1.2, bold=False):
     board.Add(t)
 
 
-silk("ShutterClock v1.1", 30, 86, 1.6, True)
+silk("ShutterClock v1.2", 80, 90.5, 1.6, True)
+silk("RTC", 27, 88.0, 0.9)
+silk("CR2032 (+ centre pin)", 58, 90.3, 0.9)
 silk("BAT 12V +  -", 13.5, 73.5, 1.0, True)
 silk("CAM +  -", 84.5, 73.5, 1.0, True)
 silk("REMOVE JP1 BEFORE USB", 46, 2.5, 0.8, True)

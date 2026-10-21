@@ -1,5 +1,15 @@
 # ShutterClock PCB
 
+- **v1.2 (2026-10-21, not ordered)**: v1.1 + battery-backed RTC. Board grown to **100 x 100 mm**
+  (mounting holes 93 x 93 mm); a 12 mm strip at the bottom carries **U5** Akizuki AE-RX8900
+  (RX8900CE DTCXO RTC, I2C 0x32 on the XIAO D4 = SDA / D5 = SCL, VDD from 3V3_SYS, FOE tied to
+  GND so FOUT stays off), **BT1** CH243-2032LF vertical CR2032 holder and **D7** 1N4148 in series
+  with the cell (the RX8900 has an internal VDD -> VBAT charge path; a CR2032 must not be charged).
+  SW1 and ZD1 moved 1-2 mm right to make room for the I2C / 3V3 tracks along the left edge.
+  DRC 0 errors / 0 unconnected. `ShutterClock_v1.2_gerbers.zip`, `render_top.png`,
+  `../docs/assembly/placement_top_v1.2.png`. **Open before ordering**: the holder's centre pin is
+  assumed to be "+" (drawing CH243-0308 does not mark polarity) - check with a cell and a meter on
+  the real part; if the outer pins are "+", swap BT1 pad nets in `generate_board.py`.
 - **v1.1 (2026-10-21, not ordered)**: the three v1.0 errata fixed (C1 polarity nets, U2 hole
   pattern 40 x 17.5 mm, F1 clip pins along the fuse axis at 7.0 mm; ZD1 moved 3.5 mm down to make
   room). DRC 0 errors / 0 unconnected (40 silk warnings). Gerbers `ShutterClock_v1.1_gerbers.zip`,
@@ -58,7 +68,8 @@
 | D10 | KA_EN | Keep-alive path: Q6 → Q5 → 10 Ω → Q7 follower (≈ 7.3–8.5 V) → CAM_P. High = on |
 | 3V3 | 3V3_SYS | From U1 (NJW4181U3-33B) through JP1 |
 | GND | GND | |
-| D3–D6, 5V | — | unused (reachable on the XIAO castellations) |
+| D4 / D5 | SDA / SCL | v1.2: RX8900 RTC module U5 (i2c1). Unused on v1.0 / v1.1 |
+| D3, D6, 5V | — | unused |
 
 Rules: never drive CAM_EN and KA_EN so that the camera is released on the keep-alive
 path; enter keep-alive only from CAM_EN = on; drop to CAM_EN = on if A1 shows > 50 mA

@@ -1,7 +1,7 @@
 # 02. 組み立て（PCB v1.0 / v1.1）
 
-対象: JLCPCB 製 ShutterClock PCB（100 × 88 mm、2 層）に [01_parts.md](01_parts.md) の部品を実装し、XIAO を挿す前の通電チェックまで。基板の版はシルクの「ShutterClock v1.0 / v1.1」で見分けます。**v1.1（2026-10-21 設計、未発注）では下の既知の問題 1〜3 は直っています**: C1 はシルクの「+」どおり、U2 は 4 本の単ピンソケットで載り、F1 のクリップは 2 ピンとも穴に入ります（配置図は [assembly/placement_top_v1.1.png](assembly/placement_top_v1.1.png)）。以下は v1.0 を前提に書いています。
-基板の電気的なつながりの正は [pcb/README.md](../pcb/README.md)、回路の根拠は [設計仕様書](../ShutterClock_設計仕様書_v0.16.md) §6 です。
+対象: JLCPCB 製 ShutterClock PCB（100 × 88 mm、2 層）に [01_parts.md](01_parts.md) の部品を実装し、XIAO を挿す前の通電チェックまで。基板の版はシルクの「ShutterClock v1.0 / v1.1」で見分けます。**v1.1（2026-10-21 設計、未発注）では下の既知の問題 1〜3 は直っています**: C1 はシルクの「+」どおり、U2 は 4 本の単ピンソケットで載り、F1 のクリップは 2 ピンとも穴に入ります（配置図は [assembly/placement_top_v1.1.png](assembly/placement_top_v1.1.png)）。**v1.2** は v1.1 に加えて基板が 100 × 100 mm になり、下の帯に RTC モジュール U5（AE-RX8900、ピン 5〜8 = SDA/SCL/VBAT/VDD の列を上辺側に）、CR2032 ホルダ BT1（中央ピン = +、実物で要確認）、直列ダイオード D7（K を U5 側）が載ります（[assembly/placement_top_v1.2.png](assembly/placement_top_v1.2.png)）。以下は v1.0 を前提に書いています。
+基板の電気的なつながりの正は [pcb/README.md](../pcb/README.md)、回路の根拠は [設計仕様書](../ShutterClock_設計仕様書_v0.17.md) §6 です。
 
 > **v1.0 の既知の問題（先に読む）**
 > 1. **C1（100 µF/50 V）の「+」シルクが逆**です。基板には左側（四角いパッド）に「+」が印刷されていますが、そこは GND です。**C1 の + 足は右側（丸いパッド、Q1 側）** に入れてください（配置図参照）。v1.1 で直します。

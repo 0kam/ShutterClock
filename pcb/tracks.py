@@ -1,4 +1,4 @@
-# Tracks for ShutterClock v1.1 (exec'd by generate_board.py; P = pad_xy).
+# Tracks for ShutterClock v1.2 (exec'd by generate_board.py; P = pad_xy).
 B = pcbnew.B_Cu
 PW = POWER_W
 
@@ -26,7 +26,7 @@ track("VIN", [(27, 60.2), (42, 60.2)], layer=B, width=1.2)
 track("VIN", [(41.08, 60.2), P("Q5", "3")], layer=B, width=1.2)
 track("VIN", [(39.62, 60.2), P("R13", "2")], layer=B, width=1.2)
 track("VIN", [(42, 60.2), P("ZD3", "1")], layer=B, width=1.2)
-track("VIN", [P("ZD1", "1"), (3, 72), (27, 72)], layer=B, width=PW)
+track("VIN", [P("ZD1", "1"), (4, 72), (27, 72)], layer=B, width=PW)
 track("VIN", [P("Q2", "3"), (41.08, 30), (41.5, 30), (41.5, 26.5), (52, 26.5), P("R4", "1")], width=PW)
 track("TVS_MID", [P("D1", "2"), P("D2", "1")])
 # ---- 3.3 V ----
@@ -40,13 +40,13 @@ track("3V3_SYS", [P("JP1", "2"), (33, 8.54), (33, 11.46), P("A1", "12")])
 track("3V3_SYS", [(33, 11.46), P("C6", "1")])
 # ---- battery divider ----
 track("ADC_NODE", [P("R2", "1"), P("R1", "1"), (14, 6.38), P("A1", "1")])
-track("ADC_NODE", [P("R2", "1"), (11, 31), (11, 34.5), (4, 34.5), P("C7", "1")])
+track("ADC_NODE", [P("R2", "1"), (12.3, 31), (12.3, 34.3), (4, 34.3), P("C7", "1")])
 # ---- MCU signals ----
 track("CAM_EN", [P("A1", "8"), (27.62, 24), (31.4, 24)], layer=B)
 via("CAM_EN", (31.4, 24))
 track("CAM_EN", [(31.4, 24), (31.4, 47.5), P("R8", "1")])
 track("KA_EN", [P("A1", "11"), (30.3, 14), (30.3, 74), P("R9", "1")])
-track("BTN", [P("A1", "10"), (26, 16.54), (26, 23), (11, 23), (11, 27), (8.5, 27), P("SW1", "1", 1)], layer=B)
+track("BTN", [P("A1", "10"), (26, 16.54), (26, 23), (11, 23), (11, 27), (10.5, 27), P("SW1", "1", 1)], layer=B)
 track("AF_DRV", [P("A1", "3"), (10, 11.46), (10, 1.6), (60, 1.6), (60, 11), P("R7", "2")], layer=B)
 track("SHUT_DRV", [P("A1", "9"), (30, 19.08), (30, 22.5), (63.5, 22.5), (63.5, 7), P("R6", "2")], layer=B)
 track("A1_NODE", [P("R14", "2"), (59.62, 76), (52, 76), P("C8", "1")])
@@ -92,3 +92,19 @@ track("JACK_TIP", [P("R20", "2"), (92, 8), P("J3", "2", 1)])
 track("JACK_RING", [P("R21", "2"), (83.62, 14), (85.5, 14), (85.5, 16.2), P("J3", "3")])
 track("JACK_SLEEVE", [P("U3", "3"), (73.62, 10.5), (85, 10.5), (85, 11.8), P("J3", "1")], layer=B)
 track("JACK_SLEEVE", [P("U4", "3"), (73.62, 18), (70, 18), (70, 10.5), (73.62, 10.5)], layer=B)
+
+# ---- RTC (v1.2): I2C from the XIAO left column down the left edge, 3V3 across on B.Cu ----
+track("SDA", [P("A1", "5"), (1.0, 16.54), (1.0, 90.69), P("U5", "5")], layer=B)
+track("SCL", [P("A1", "6"), (1.0, 19.08), (1.0, 89.0), (25.73, 89.0), P("U5", "6")])
+track("3V3_SYS", [P("C6", "1"), (33, 24.5)])
+via("3V3_SYS", (33, 24.5))
+track("3V3_SYS", [(33, 24.5), (33, 25.2), (25, 25.2)], layer=B)
+via("3V3_SYS", (25, 25.2))
+track("3V3_SYS", [(25, 25.2), (15.2, 25.2)])
+via("3V3_SYS", (15.2, 25.2))
+track("3V3_SYS", [(15.2, 25.2), (12.8, 25.2)], layer=B)  # hop under the ADC_NODE track at x = 14
+via("3V3_SYS", (12.8, 25.2))
+track("3V3_SYS", [(12.8, 25.2), (2.0, 25.2), (2.0, 88.0), (30.81, 88.0), P("U5", "8")])
+track("BT_P", [P("BT1", "1"), P("D7", "2")])
+track("VBAT_RTC", [P("D7", "1"), (28.27, 93.58), P("U5", "7")])
+track("GND", [P("BT1", "2", 0), P("BT1", "2", 1)])

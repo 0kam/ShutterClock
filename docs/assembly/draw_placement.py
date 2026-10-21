@@ -13,19 +13,19 @@ fps = {f["ref"]: f for f in d["fps"]}
 STEP = {  # soldering step -> (colour, refs)
     1: ("#e53935", ["U1"]),
     2: ("#fdd835", [r for r in fps if r.startswith("R")]),
-    3: ("#fb8c00", ["D1", "D2", "D4", "D6", "ZD1", "ZD2", "ZD3", "ZD4"]),
+    3: ("#fb8c00", ["D1", "D2", "D4", "D6", "D7", "ZD1", "ZD2", "ZD3", "ZD4"]),
     4: ("#8d6e63", ["C2", "C4", "C6", "C7", "C8"]),
     5: ("#43a047", ["JP1", "JP2", "A1", "U3", "U4", "SW1"]),
     6: ("#8e24aa", ["Q1", "Q2", "Q3", "Q5", "Q6", "Q7"]),
-    7: ("#1e88e5", ["C1", "C3", "F1", "J1", "J2", "J3"]),
-    8: ("#757575", ["U2"]),
+    7: ("#1e88e5", ["C1", "C3", "F1", "J1", "J2", "J3", "BT1"]),
+    8: ("#757575", ["U2", "U5"]),
 }
 STEP_NAME = {1: "U1 (SMD LDO)", 2: "Resistors", 3: "Diodes (band = K)", 4: "Ceramic caps",
              5: "Headers / sockets / DIP / switch", 6: "MOSFETs (G-D-S)", 7: "Electrolytics / fuse clips / terminals / jack",
-             8: "U2 module (on pins, set 9.4 V, LED removed)"}
+             8: "U2 module (on pins, set 9.4 V, LED removed); U5 RTC module (v1.2)"}
 step_of = {r: s for s, (_, refs) in STEP.items() for r in refs}
 
-W, H = 100.0, 88.0
+W, H = 100.0, (100.0 if VER >= "v1.2" else 88.0)
 fig = plt.figure(figsize=(14, 14 * (H + 14) / W), dpi=170)
 ax = fig.add_axes([0.02, 0.02, 0.96, 0.96])
 ax.set_xlim(-2, W + 2); ax.set_ylim(H + 13, -2); ax.set_aspect("equal"); ax.axis("off")
@@ -79,7 +79,7 @@ for ref in fps:
         label(ref, size=6.2, rot=90)
     elif ref == "R3":
         label(ref, size=7.5)
-    elif ref.startswith("ZD") or ref in ("D6",):
+    elif ref.startswith("ZD") or ref in ("D6", "D7"):
         label(ref, size=6, dy=(0 if f["rot"] == 0 else 0), rot=(90 if f["rot"] == 90 else 0))
     elif ref in ("D1", "D2"):
         label(ref, size=6.5, rot=90)
@@ -97,6 +97,10 @@ for ref in fps:
         label(ref, size=6.8, two_line=True)
     elif ref == "U1":
         txt(f["cb"][2] + 0.6, (f["cb"][1] + f["cb"][3]) / 2, "U1 NJW4181\n(SOT-89)", 6.5, weight="bold", ha="left")
+    elif ref == "U5":
+        txt(f["x"], f["y"], "U5 AE-RX8900 (RTC)\npins 5-8 top: SDA SCL VBAT VDD", 6.5, weight="bold")
+    elif ref == "BT1":
+        txt(f["x"], f["y"] - 0.3, "BT1 CR2032 vertical holder\ncentre pin = + (verify)", 7, weight="bold")
     elif ref == "U2":
         txt(f["x"], f["y"], "U2  MBC2596-01 module" + (" (v1.0 holes do not fit: use bent tinned wire)" if VER == "v1.0" else " (on 4 single pins)") + "\nset to 9.4 V before fitting, remove the red LED\nIN side left, OUT side right", 9, weight="bold")
     elif ref == "A1":
@@ -117,7 +121,8 @@ def pad(ref, num, idx=0):
     ps = [p for p in fps[ref]["pads"] if p["num"] == num and p["th"]]
     return ps[idx]["x"], ps[idx]["y"]
 
-for ref in ("D1", "D2", "D4", "D6", "ZD1", "ZD2", "ZD3", "ZD4"):
+for ref in ("D1", "D2", "D4", "D6", "D7", "ZD1", "ZD2", "ZD3", "ZD4"):
+    if ref not in fps: continue
     t = [t for t in fps[ref]["texts"] if t["t"] == "K" and t["layer"] == "F.Silkscreen"][0]
     txt(t["x"], t["y"], "K", 7, "#b71c1c", "bold", bg="white")
 for ref, num in (("Q1", "G"), ):
