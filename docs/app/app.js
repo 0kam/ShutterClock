@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const APP_VERSION = '2026-10-20a';
+const APP_VERSION = '2026-10-21a';
 
 /* ---------- project schemas ---------- */
 
@@ -162,7 +162,7 @@ function setConnected(on) {
   $('btn-connect').hidden = on; $('btn-disconnect').hidden = !on;
   $('conn-state').textContent = on ? state.deviceId : '未接続';
   document.querySelectorAll('.needs-conn').forEach(el => el.disabled = !on);
-  if (!on) { state.shot = null; state.downloadedThisSession = false; state.camPowered = false; $('cam-state').textContent = '-'; $('live-vbat').textContent = '---'; $('live-ma').textContent = '---'; updateCamButton(); }
+  if (!on) { state.shot = null; state.downloadedThisSession = false; state.camPowered = false; $('cam-state').textContent = '-'; $('next-shot').textContent = ''; $('live-vbat').textContent = '---'; $('live-ma').textContent = '---'; updateCamButton(); }
   updateEraseButton();
 }
 async function refreshStatus() {
@@ -419,6 +419,17 @@ function updateCamUi(st, hold, vbat, ma) {
   if (ma !== undefined) $('live-ma').textContent = ma;
   updateCamButton();
 }
+/* Next scheduled shot and the reset hold-off (firmware waits 10 min x consecutive resets before the first scheduled shot). */
+function updateNextShot(st, holdoffMin, nextEpoch) {
+  const el = $('next-shot');
+  if (st & 16) { el.className = 'status err'; el.textContent = '予定撮影は停止中: 短時間に再起動を繰り返したため。電源を入れ直すと再開します'; return; }
+  const tz = state.site && state.site.tz_min != null ? state.site.tz_min : 540;
+  const next = nextEpoch ? new Date((nextEpoch + tz * 60) * 1000).toISOString().slice(5, 16).replace('T', ' ') : null;
+  let text = next ? `次の予定撮影: ${next}` : '次の予定撮影: なし（スケジュール OFF か時刻未設定）';
+  if (holdoffMin > 0) { el.className = 'status warn'; text += `。再起動後の保留中: あと ${holdoffMin} 分は予定撮影をしません（電源投入・書き込み・XIAO 抜き差しのたびに 10 分 × 連続回数）`; }
+  else el.className = 'status';
+  el.textContent = text;
+}
 function updateCamButton() {
   const b = $('btn-cam-toggle');
   if (state.camAlwaysOn) { b.textContent = '常時給電モード（常に ON）'; b.disabled = true; return; }
@@ -437,6 +448,7 @@ async function shotConnect() {
     const dv = ev.target.value;
     const vbat = dv.getUint16(0, true), ma = dv.getUint16(2, true), st = dv.getUint8(4), hold = dv.getUint16(5, true);
     updateCamUi(st, hold, vbat, ma);
+    if (dv.byteLength >= 12) updateNextShot(st, dv.getUint8(7), dv.getUint32(8, true));
   });
   await live.startNotifications();
   state.shot = { live, ctrl, status };
@@ -533,7 +545,7 @@ function enterDemo() {
     if (def.kind === 'hhmm') setSelectValue($('set-' + def.key), v, hhmm); else setSelectValue($('set-' + def.key), v, x => String(x));
   }
   $('tz-info').textContent = 'UTC+09:00（同期時にスマホから自動設定）';
-  updateCamUi(0, 0, 12630, 0);
+  updateCamUi(0, 0, 12630, 0); updateNextShot(0, 0, Math.floor(Date.now() / 1000) + 1800);
   $('dl-progress').textContent = '合計 ' + state.records.length + ' 件（デモデータ）';
   renderData(); updateEraseButton();
   log('デモ表示モード: 本体には接続していません。?demo=1 を外すと通常動作に戻ります', 'warn');

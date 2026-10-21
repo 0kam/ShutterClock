@@ -12,6 +12,8 @@
 #include "app.h"
 #include "config.h"
 #include "camera.h"
+#include "diag.h"
+#include "timekeeping.h"
 #include "battery.h"
 #include "storage.h"
 #include "ble_adv.h"
@@ -38,7 +40,7 @@ static bool cmd_busy;
 static uint8_t cmd_seq;
 static bool records_downloaded;
 static int64_t live_started_ms;
-static uint8_t live_buf[8];
+static uint8_t live_buf[12];
 static uint16_t last_peak_ma, last_awake_ms;
 
 K_THREAD_STACK_DEFINE(shot_wq_stack, 2048);
@@ -92,6 +94,9 @@ static uint8_t state_byte(void)
 	}
 	if (c.cam_mode == CAM_MODE_ALWAYS_ON) {
 		s |= SHOT_STATE_ALWAYS_ON;
+	}
+	if (diag_measure_halted()) {
+		s |= SHOT_STATE_HALTED;
 	}
 	return s;
 }
@@ -202,7 +207,16 @@ static void live_work_fn(struct k_work *work)
 	sys_put_le16(ma, &live_buf[2]);
 	live_buf[4] = state_byte();
 	sys_put_le16((uint16_t)MIN(camera_hold_left_s(), 65535), &live_buf[5]);
-	live_buf[7] = 0;
+	{
+		int64_t left_ms = diag_holdoff_until_ms() - k_uptime_get();
+		uint32_t now, next = 0;
+
+		live_buf[7] = left_ms > 0 ? (uint8_t)MIN((left_ms + 59999) / 60000, 255) : 0;
+		if (time_now(&now) == 0) {
+			next = config_next_trigger(now);
+		}
+		sys_put_le32(next, &live_buf[8]);
+	}
 	if (live_notify_enabled) {
 		(void)bt_gatt_notify(NULL, LIVE_ATTR, live_buf, sizeof(live_buf));
 	}

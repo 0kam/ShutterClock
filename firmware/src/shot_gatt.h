@@ -2,9 +2,10 @@
  * Shot / installation GATT service (replaces SnowGauge's calibration service).
  *
  * Service  53430001-6E63-4D61-8B0C-7A8E9F0B1C2D
- *  live    53430002-...  notify, 8 bytes LE every ~250 ms while enabled:
+ *  live    53430002-...  notify, 12 bytes LE every ~250 ms while enabled:
  *                        vbat_mv u16, cam_ma u16, state u8 (SHOT_STATE_*),
- *                        hold_left_s u16, reserved u8
+ *                        hold_left_s u16, holdoff_min u8 (reset hold-off left,
+ *                        0 = scheduler free), next_shot_epoch u32 (0 = none)
  *  control 53430003-...  write: 0x00 live off, 0x01 live on,
  *                        0x10 TEST SHOT (full sequence, stored as a MANUAL record),
  *                        0x11 + u16 minutes: camera on for N minutes (0 = off now),
@@ -31,6 +32,7 @@
 #define SHOT_STATE_KEEPALIVE    BIT(1)
 #define SHOT_STATE_LIVE         BIT(2)
 #define SHOT_STATE_ALWAYS_ON    BIT(3)
+#define SHOT_STATE_HALTED       BIT(4) /* reset loop: scheduled shots stopped until the next reboot */
 
 int shot_gatt_init(void);
 bool shot_live_is_on(void);
