@@ -74,7 +74,11 @@ bool diag_measure_halted(void);
 /* Uptime (ms) before which the scheduler must not shoot (always 0 since 2026-10-21; kept for the GATT field). */
 int64_t diag_holdoff_until_ms(void);
 
-/* Clear the consecutive-reset counter and the halt (called on BLE connect: a person is there). */
+/*
+ * Clear the consecutive-reset counter and the halt (called on BLE connect: a
+ * person is there). Updates RAM at once; the flash write is deferred to the
+ * system work queue, so this is safe from Bluetooth callbacks.
+ */
 void diag_boots_clear(void);
 
 /* Append the boot line to /lfs1/boot.log (after storage_init + clock restore). */

@@ -46,6 +46,14 @@ int time_set(uint32_t epoch, bool synced);
 /* Copy the current time into the rtc alias device (for mcumgr datetime get). */
 int time_refresh_rtc(void);
 
+/*
+ * External battery-backed RTC (RX8900, PCB v1.2, `extrtc` alias): restore the
+ * clock from it at boot (counts as SYNCED); every external sync is written to it.
+ */
+int time_restore_extrtc(void);
+enum extrtc_state { EXTRTC_ABSENT = 0, EXTRTC_INVALID, EXTRTC_OK };
+enum extrtc_state time_extrtc_state(void);
+
 enum time_state time_get_state(void);
 
 /* "YYYY-MM-DDThh:mm:ssZ" (21 bytes incl. NUL) or "unset". */

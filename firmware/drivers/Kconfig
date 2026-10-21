@@ -1,0 +1,7 @@
+config RTC_RX8900
+	bool "Epson RX8900 I2C RTC (ShutterClock PCB v1.2, Akizuki AE-RX8900)"
+	default y
+	depends on RTC && I2C && DT_HAS_EPSON_RX8900_ENABLED
+	help
+	  Minimal get/set time driver. The board probes the module at boot; a
+	  board without it (v1.0 / v1.1) just reports the device as not ready.

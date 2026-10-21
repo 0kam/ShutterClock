@@ -79,4 +79,6 @@ config SHUTTERCLOCK_SCHED_DEFAULT_TZ_MIN
 
 endmenu
 
+rsource "drivers/Kconfig"
+
 source "Kconfig.zephyr"

@@ -1,0 +1,5 @@
+description: Epson RX8900 SA/CE I2C real-time clock module (DTCXO, backup switchover)
+
+compatible: "epson,rx8900"
+
+include: [i2c-device.yaml, rtc-device.yaml]

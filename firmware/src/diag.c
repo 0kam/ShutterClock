@@ -121,16 +121,40 @@ int diag_count_boot(void)
 	return ret;
 }
 
+/*
+ * Persist the cleared counter from the system work queue. Never write flash
+ * from a Bluetooth callback: with the SoftDevice Controller a flash write is
+ * synchronised with radio timeslots, and blocking the BT RX thread on it
+ * stalls the connection set-up (seen 2026-10-21: no app connection, then a
+ * watchdog reset).
+ */
+static bool clear_was_halted;
+static uint8_t clear_was_count;
+
+static void boots_clear_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	if (clear_was_count > 1 || clear_was_halted) {
+		LOG_INF("BLE connection - reset counter cleared (was %u%s)", clear_was_count,
+			clear_was_halted ? ", halted" : "");
+		clear_was_count = 0;
+		clear_was_halted = false;
+	}
+	(void)save_boots(0); /* NVS skips the write when the stored value is already 0 */
+}
+static K_WORK_DEFINE(boots_clear_work, boots_clear_work_fn);
+
 void diag_boots_clear(void)
 {
 	/* Someone connected over BLE: a person is present, so this is not a reset loop. */
 	if (info.boot_count > 1 || info.halted) {
-		LOG_INF("BLE connection - reset counter cleared (was %u%s)", info.boot_count,
-			info.halted ? ", halted" : "");
+		clear_was_count = info.boot_count;
+		clear_was_halted = info.halted;
 	}
 	info.boot_count = 1;
 	info.halted = false;
-	(void)save_boots(0);
+	/* Safe from any thread / BT callback: only queues the flash write. */
+	(void)k_work_submit(&boots_clear_work);
 }
 
 const struct diag_boot *diag_boot_info(void)

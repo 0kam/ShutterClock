@@ -166,6 +166,7 @@ int main(void)
 	}
 	(void)diag_count_boot(); /* needs the settings subsystem (config_init) */
 	(void)time_restore_saved();
+	(void)time_restore_extrtc(); /* PCB v1.2: battery-backed RTC overrides the estimate */
 	(void)diag_log_boot();
 	config_set_change_cb(config_changed);
 	ret = ble_adv_init();

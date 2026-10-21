@@ -500,6 +500,11 @@ static int cmd_time(const struct shell *sh, size_t argc, char **argv)
 	} else {
 		shell_print(sh, "time unset - 'time set <epoch>' (UTC seconds)");
 	}
+	{
+		static const char *const ext[] = { "absent", "INVALID (sync from the app)", "ok" };
+
+		shell_print(sh, "external RTC (RX8900): %s", ext[time_extrtc_state()]);
+	}
 	return 0;
 }
 SHELL_CMD_ARG_REGISTER(time, NULL, "Wall clock: time [set <epoch>]", cmd_time, 1, 2);

@@ -12,6 +12,7 @@
  */
 
 #include <zephyr/dt-bindings/adc/adc.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
 #include <zephyr/dt-bindings/adc/nrf-adc.h>
 
 /*
@@ -27,8 +28,15 @@
 	status = "disabled";
 };
 
+/* PCB v1.2: RX8900 RTC module on D4 (SDA) / D5 (SCL). Probed at boot; absent on v1.0/v1.1. */
 &i2c1 {
-	status = "disabled";
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	rx8900: rx8900@32 {
+		compatible = "epson,rx8900";
+		reg = <0x32>;
+		status = "okay";
+	};
 };
 
 / {
@@ -118,6 +126,7 @@
 
 	aliases {
 		rtc = &rtc_emul;
+		extrtc = &rx8900;
 	};
 };
 

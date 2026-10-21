@@ -5,6 +5,7 @@
 #include <zephyr/drivers/rtc.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/settings/settings.h>
+#include <zephyr/sys/timeutil.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -14,7 +15,11 @@
 LOG_MODULE_REGISTER(timekeeping, CONFIG_LOG_DEFAULT_LEVEL);
 
 static const struct device *const rtc = DEVICE_DT_GET(DT_ALIAS(rtc));
+/* External battery-backed RTC (RX8900 on PCB v1.2); NULL / not ready on older boards. */
+static const struct device *const extrtc = DEVICE_DT_GET_OR_NULL(DT_ALIAS(extrtc));
 static enum time_state state = TIME_UNSET;
+static bool extrtc_valid;      /* the external RTC holds a time we trust */
+static bool restoring_from_ext; /* time_set() must not write the source back */
 
 /*
  * The clock itself is base_epoch + elapsed k_uptime: k_uptime reads the
@@ -142,7 +147,58 @@ int time_set(uint32_t epoch, bool synced)
 	if (ret) {
 		LOG_WRN("rtc_set_time: %d", ret);
 	}
+	if (synced && !restoring_from_ext && extrtc != NULL && device_is_ready(extrtc)) {
+		ret = rtc_set_time(extrtc, &t);
+		if (ret) {
+			LOG_WRN("external RTC set: %d", ret);
+			extrtc_valid = false;
+		} else {
+			extrtc_valid = true;
+			LOG_INF("external RTC set to %u", epoch);
+		}
+	}
 	return 0;
+}
+
+int time_restore_extrtc(void)
+{
+	struct rtc_time t;
+	struct tm tm;
+	int64_t epoch;
+	int ret;
+
+	if (extrtc == NULL || !device_is_ready(extrtc)) {
+		return -ENODEV;
+	}
+	ret = rtc_get_time(extrtc, &t);
+	if (ret) {
+		LOG_WRN("external RTC has no valid time (%d) - sync it from the app", ret);
+		extrtc_valid = false;
+		return ret;
+	}
+	tm = *rtc_time_to_tm(&t);
+	epoch = timeutil_timegm64(&tm);
+	if (epoch < TIME_EPOCH_MIN || epoch > TIME_EPOCH_MAX) {
+		LOG_WRN("external RTC time implausible (%lld)", epoch);
+		extrtc_valid = false;
+		return -EINVAL;
+	}
+	restoring_from_ext = true;
+	ret = time_set((uint32_t)epoch, true);
+	restoring_from_ext = false;
+	if (ret == 0) {
+		extrtc_valid = true;
+		LOG_INF("clock restored from the external RTC (%lld)", epoch);
+	}
+	return ret;
+}
+
+enum extrtc_state time_extrtc_state(void)
+{
+	if (extrtc == NULL || !device_is_ready(extrtc)) {
+		return EXTRTC_ABSENT;
+	}
+	return extrtc_valid ? EXTRTC_OK : EXTRTC_INVALID;
 }
 
 static int rtc_write(uint32_t epoch)
